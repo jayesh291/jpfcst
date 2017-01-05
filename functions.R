@@ -27,3 +27,23 @@ plotmeters <- function(mtr.data, filename)
 
 
 plotmeters(mtr.f, "./outs/test.pdf")
+
+
+getSlidingWindows <- function(data, window, step){
+  total <- length(data[[1]])
+  spots <- seq(from=1, to=(total-window), by=step)
+  cl.nms <- droplevels(data[1:length(spots),ts])
+  r.nms = c(1:window)
+  result = table(r.nms)
+  for(i in 1:length(spots)){
+    result <- cbind(result, (data[spots[i]:(spots[i]+window-1), val]))
+  }
+  colnames(result) <- c("V1",levels(cl.nms))
+  return(result)
+}
+
+window=7
+step=1
+data=mtr.id.data
+j<- getSlidingWindows(data, window, step)
+
