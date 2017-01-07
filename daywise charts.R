@@ -6,8 +6,6 @@ library(data.table)
 library(psych)
 library(plotrix)
 
-setwd("C:/jp/ml/20161218")
-
 head(meterdata, 10)
 
 sorteddata <- meterdata[order(meterdata$id, meterdata$ts),]

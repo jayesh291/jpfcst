@@ -122,3 +122,20 @@ library(wavelets)
    stopifnot(identical(x, unlist(x)))
  
  
+ data <- c(runif(100000, min=0, max=.1),runif(100000, min=.05, max=.1),runif(10000, min=.05, max=1), runif(100000, min=0, max=.2))
+ 
+ slideFunct <- function(data, window, step){
+   total <- length(data)
+   spots <- seq(from=1, to=(total-window), by=step)
+   result <- vector(length = length(spots))
+   for(i in 1:length(spots)){
+     result[i] <- mean(data[spots[i]:(spots[i]+window)])
+   }
+   return(result)
+ }
+ 
+ window=10
+ step=1
+ j<- slideFunct(data, window, step)
+ head(j)
+ 
