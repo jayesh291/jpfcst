@@ -3,25 +3,32 @@ ts_model <- function(train_data_set, test_data_set){
   
 }
 
-timeseriesForecast <- function(train_data_set, test_data_set){
-
+timeseriesHclustUsingCorrelation <- function(trainDataSet){
   
-  # daily_data <- read.csv("temp_dmd_data_daily.txt",header = FALSE, col.names = c("id","dates","value"),sep = "\t")
-  # str(daily_data)
-  # daily_data_sorted <- daily_data[order(daily_data$id,daily_data$dates),]
-  # daily_data_sorted$ts1 <- as.POSIXct(x = daily_data_sorted$dates, format = "%Y-%m-%d")
+  # distanceMatrix <- distanceMatrixCorr(dataset)
+  # numOfClust = 15
+  # tsHclust(distanceMatrix, numOfClust = numOfClust)
   # 
-  # data_ts <- cast(daily_data_sorted, id~ts1)
-  correlation_matrix <- cor((data_ts),use = "pairwise.complete.obs",method = "pearson")
-  correlation_matrix[which(is.na(correlation_matrix))] <- 0
-  colm_truncate <- correlation_matrix[,na.omit(correlation_matrix)]
-  corrplot(correlation_matrix,method = "shade", is.corr = FALSE,type="upper")
-  plot(hclust(dist(abs(na.omit(correlation_matrix)))))
-  write.csv(file = "correlation.csv",correlation_matrix)
-  
-  
-  
+  # return(distance)
 }
+
+
+tsHclust <- function(distance, numOfClust) {
+  pdf(file = "dendogram.pdf")
+  hc <- hclust(distance,method="complete")
+  plot(hc, cex = 0.25, hang = -1, main="Dissimilarity = 1 - Correlation", xlab="")
+  rhc <- rect.hclust(hc, k = numOfClust, border = 2)
+  dev.off()
+  return(rhc)
+}
+
+distanceMatrixCorr <- function(dataset){
+  dissimilarity <- 1 - abs(cor(t(timeseries_meter_data),use = "pairwise.complete.obs",method = "pearson"))
+  distance <- as.dist(dissimilarity)
+  return(distance)
+}
+
+
 
 ts_correlation <- function(ts_data,method){
   correlation_matrix <- cor((ts_data),use = "pairwise.complete.obs",method = "pearson")
