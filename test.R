@@ -139,3 +139,24 @@ library(wavelets)
  j<- slideFunct(data, window, step)
  head(j)
  
+ 
+ setwd("C:/jp/ml/20161218")
+ 
+ meterdata <-
+   read.csv(
+     "meterdata.txt",
+     sep = "\t",
+     header = FALSE,
+     col.names = c("id", "ts", "val")
+   )
+ 
+ 
+ 
+ plot(
+   meterdata$ts,
+   meterdata$val,
+   type = "l",
+   ylab = "Reading",
+   xlab = "Time"
+ )
+ 

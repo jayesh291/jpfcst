@@ -1,11 +1,31 @@
-meterid = "52D61DBC-595E-4E10-BA46-9EF4EE0650C2"
-mtr.id.data = sorteddata2[id == meterid & ts1 > "2016-11-26",]
+#get first representative id
+grp = 5
+mmbr = 1
+window = 7
+step = 1
 
-window=7
-step=1
-data=mtr.id.data
-j<- getSlidingWindows(data, window, step)
+for(grp in 1:length(rhc)){
+  for(mmbr in 1:length(rhc[[grp]])){
+    repid = rep.ids[grp]
+    targetid = names(rhc[[grp]])[mmbr]
+    rep.id.data = mtr.f2[id == repid, ]
+    j <- getSlidingWindows(rep.id.data, window, step)
+    
+    j[, 1] <- mtr.f3[id == targetid, val]
+    
+    C4 <- cor(j, use = "pairwise.complete.obs", method = "kendall")[,1]
+    C4[C4 == 1] <- 0
+    matcheddate <- names(C4[match(max(C4), C4)])
+    
+    write.csv(C4, paste0("./outs/correlations-g", grp,"-m",mmbr , ".csv"))
+    
+  }
+}
 
-j$v1 <- c(44.39583, 30.73958, 4.03125, 0, 19.73958, 20.30769, 16.17708)
 
-C4<- cor(na.omit(j), use = "pairwise.complete.obs", method = "kendall")
+
+
+
+
+
+

@@ -9,7 +9,7 @@ plotmeters <- function(mtr.data, filename)
   for (meterid in meterids)
   {
     # print(meterid)
-    datatoplot <- mtr.data.dt[id == meterid & ts1 > "2016-11-26"]
+    datatoplot <- mtr.data.dt[id == meterid]
     if (nrow(datatoplot) > 0)
     {
       plot(
@@ -26,9 +26,6 @@ plotmeters <- function(mtr.data, filename)
 }
 
 
-plotmeters(mtr.f, "./outs/test.pdf")
-
-
 getSlidingWindows <- function(data, window, step){
   total <- length(data[[1]])
   spots <- seq(from=1, to=(total-window), by=step)
@@ -41,9 +38,3 @@ getSlidingWindows <- function(data, window, step){
   colnames(result) <- c("V1",levels(cl.nms))
   return(result)
 }
-
-window=7
-step=1
-data=mtr.id.data
-j<- getSlidingWindows(data, window, step)
-

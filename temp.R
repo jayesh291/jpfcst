@@ -84,3 +84,16 @@ for (meterid in meterids)
 }
 
 dev.off()
+
+
+mtr.f1[, .(val.stdev = sd(val)), by = id][ id == "A8D81B5B-8C4A-4550-936A-6B695D5384A0"]
+mtr.f1[, .(val.stdev = sd(val)), by = id][ id == "EA61A98A-9107-4D3E-A324-8DFA795F1AA2"]
+
+
+
+hc <- hclust(dist(C1))
+plot(hc, cex = 0.2, hang = -1)
+rhc <- rect.hclust(hc, k = 15, border = 2)
+
+dev.off()
+

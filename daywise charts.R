@@ -2,9 +2,7 @@
 #install.packages("plotrix")
 #install.packages("data.table")
 
-library(data.table)
-library(psych)
-library(plotrix)
+
 
 head(meterdata, 10)
 
