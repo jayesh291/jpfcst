@@ -35,5 +35,4 @@ getSlidingWindows <- function(data, window, step){
 
 window=7
 step=1
-# data=mtr.id.data
 i = 1
