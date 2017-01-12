@@ -6,7 +6,6 @@ transformToTimeSeries <- function(dataset){
 preprocess <- function(rawdata){
   filterInvalidMeters <- filterMetersWithInvalidData(rawdata)
   timeseriesData <- transformToTimeSeries(filterInvalidMeters)
-  head(rawdata)
   return(timeseriesData)
 }
 
@@ -18,8 +17,8 @@ filterMetersWithInvalidData <- function(dataset){
   return(mtrFiltered)
 }
 
-meterid = "52D61DBC-595E-4E10-BA46-9EF4EE0650C2"
-mtr.id.data = sorteddata2[id == meterid & ts1 > "2016-11-26",]
+# meterid = "52D61DBC-595E-4E10-BA46-9EF4EE0650C2"
+# mtr.id.data = sorteddata2[id == meterid & ts1 > "2016-11-26",]
 
 getSlidingWindows <- function(data, window, step){
   total <- length(data[[1]])
@@ -36,5 +35,5 @@ getSlidingWindows <- function(data, window, step){
 
 window=7
 step=1
-data=mtr.id.data
+# data=mtr.id.data
 i = 1
