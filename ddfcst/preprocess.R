@@ -23,16 +23,13 @@ filterMetersWithInvalidData <- function(dataset){
 getSlidingWindows <- function(data, window, step){
   total <- length(data[[1]])
   spots <- seq(from=1, to=(total-window), by=step)
-  cl.nms <- c(levels(data[1:length(spots), ts]))
+  cl.nms <- data[1:length(spots), "ts"]
   r.nms = c(1:window)
   result = table(r.nms)
   for(i in 1:length(spots)){
-    result <- cbind(result, (data[spots[i]:(spots[i]+window-1), val]))
+    result <- cbind(result, (data[spots[i]:(spots[i]+window-1), "val"]))
   }
   colnames(result, cl.nms)
   return(result)
 }
 
-window=7
-step=1
-i = 1
