@@ -3,19 +3,15 @@ ts_model <- function(train_data_set, test_data_set){
   
 }
 
-ts_forecast <- function(train_data_set, test_data_set){
-  library(data.table)
-  library(psych)
-  library(plotrix)
-  library(reshape)
-  library(corrplot)
+timeseriesForecast <- function(train_data_set, test_data_set){
+
   
-  daily_data <- read.csv("temp_dmd_data_daily.txt",header = FALSE, col.names = c("id","dates","value"),sep = "\t")
-  str(daily_data)
-  daily_data_sorted <- daily_data[order(daily_data$id,daily_data$dates),]
-  daily_data_sorted$ts1 <- as.POSIXct(x = daily_data_sorted$dates, format = "%Y-%m-%d")
-  
-  data_ts <- cast(daily_data_sorted, id~ts1)
+  # daily_data <- read.csv("temp_dmd_data_daily.txt",header = FALSE, col.names = c("id","dates","value"),sep = "\t")
+  # str(daily_data)
+  # daily_data_sorted <- daily_data[order(daily_data$id,daily_data$dates),]
+  # daily_data_sorted$ts1 <- as.POSIXct(x = daily_data_sorted$dates, format = "%Y-%m-%d")
+  # 
+  # data_ts <- cast(daily_data_sorted, id~ts1)
   correlation_matrix <- cor((data_ts),use = "pairwise.complete.obs",method = "pearson")
   correlation_matrix[which(is.na(correlation_matrix))] <- 0
   colm_truncate <- correlation_matrix[,na.omit(correlation_matrix)]
