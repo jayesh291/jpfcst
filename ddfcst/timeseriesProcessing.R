@@ -3,6 +3,7 @@
 representativeTimeSeries <- function(clusters,timesereisdata,meterdata){
   
   tsData <- t(timesereisdata)
+  representiveSereisIDs <- c()
   for(i in 1: length(clusters)){
     # subset data
     grpno <- c(grpno, unlist(x = clusters[[i]], recursive = T, use.names = T))
@@ -20,11 +21,12 @@ representativeTimeSeries <- function(clusters,timesereisdata,meterdata){
     cl.mns <- colMeans(C3)
     rep.mtr.id <- names(cl.mns)[match(max(cl.mns), cl.mns)]
     rep.ids <- c(rep.ids, rep.mtr.id)
-    
+    representiveSereisIDs <- c(representiveSereisIDs,rep.ids)
     #plot groups
-    filter.cluster <- (meterdata$id %in% c(id))
-    plotmeters(meterdata[which(filter.cluster), ], paste0("outs/correlations", i , "-", rep.mtr.id, ".pdf"))
-    
+    # filter.cluster <- (meterdata$id %in% c(id))
+    # plotmeters(meterdata[which(filter.cluster), ], paste0("outs/correlations", i , "-", rep.mtr.id, ".pdf"))
+    # 
   }
+    return(unique(representiveSereisIDs))
   
 }
