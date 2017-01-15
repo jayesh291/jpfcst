@@ -50,8 +50,8 @@ for (i in 1:length(rhc)) {
     
     #plot groups
     filter.cluster <- (mtr.f$id %in% c(id))
-    plotmeters(mtr.f[which(filter.cluster),],
-               paste0("./outs/correlations", i , "-", rep.mtr.id, ".pdf"))
+    plotmeterswithrep(mtr.data = mtr.f[which(filter.cluster),],
+               filename = paste0("./outs/correlations", i , "-", rep.mtr.id, ".pdf"), rep.mtr.id = rep.mtr.id)
   }
 }
 

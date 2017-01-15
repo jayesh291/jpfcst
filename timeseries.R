@@ -1,6 +1,9 @@
+#install.packages("reshape","corrplot","data.table","psych","plotrix")
+
+
 rm(list = ls())
 
-setwd("C:/jp/ml/20161218")
+setwd("C:/jp/git/jpfcst/jpfcst")
 
 library(reshape)
 library(corrplot)
@@ -13,3 +16,5 @@ source("C:/jp/git/jpfcst/jpfcst/dataset.R")
 source("C:/jp/git/jpfcst/jpfcst/preprocess.R")
 source("C:/jp/git/jpfcst/jpfcst/meterdata.R")
 source("C:/jp/git/jpfcst/jpfcst/matchpattern.R")
+source("C:/jp/git/jpfcst/jpfcst/forecast.R")
+

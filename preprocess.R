@@ -21,6 +21,10 @@ mtr.f2 <- mtr.f1[filterdt, c("id", "ts", "val")]
 filtertgt <- (mtr.f1$ts1 >= "2017-01-01" & mtr.f1$ts1 < "2017-01-08")
 mtr.f3 <- mtr.f1[filtertgt, c("id", "ts", "val")]
 
+#prediction period
+# filterprdct <- (mtr.f1$ts1 >= "2017-01-08" & mtr.f1$ts1 < "2017-01-15")
+# mtr.f4 <- mtr.f1[filterprdct, c("id", "ts", "val")]
+
 
 #get meters with 0 stdev
 zero.sds <-  mtr.f2[, .(val.stdev = sd(val)), by = id][val.stdev == 0]
