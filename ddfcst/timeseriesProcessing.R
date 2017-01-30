@@ -24,7 +24,7 @@ representativeTimeSeries <- function(clusters,timesereisdata,meterdata){
     representiveSereisIDs <- c(representiveSereisIDs,rep.ids)
     #plot groups
     # filter.cluster <- (meterdata$id %in% c(id))
-    # plotmeters(meterdata[which(filter.cluster), ], paste0("outs/correlations", i , "-", rep.mtr.id, ".pdf"))
+    plotmeters(meterdata[which(filter.cluster), ], paste0("outs/correlations", i , "-", rep.mtr.id, ".pdf"))
     # 
   }
     return(unique(representiveSereisIDs))
