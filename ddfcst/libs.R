@@ -4,6 +4,19 @@ library(plotrix)
 library(reshape)
 library(corrplot)
 library(ggplot2)
+library(dtw)
+library(zoo)
+library(proxy)
+library(forecast)
+# proxy supports many dist calculation
+# <start> 
+# "Jaccard" "Kulczynski1" "Kulczynski2" "Mountford" "Fager" "Russel" "simple matching" "Hamman" "Faith"
+# "Tanimoto" "Dice" "Phi" "Stiles" "Michael" "Mozley" "Yule" "Yule2" "Ochiai"
+# "Simpson" "Braun-Blanquet" "cosine" "eJaccard" "fJaccard" "correlation" "Chi-squared" "Phi-squared" "Tschuprow"
+# "Cramer" "Pearson" "Gower" "Euclidean" "Mahalanobis" "Bhjattacharyya" "Manhattan" "supremum" "Minkowski"
+# "Canberra" "Wave" "divergence" "Kullback" "Bray" "Soergel" "Levenshtein" "Podani" "Chord"
+# "Geodesic" "Whittaker" "Hellinger"
+# <end>
 
 # library(forecast)
 # library(PerformanceAnalytics)
