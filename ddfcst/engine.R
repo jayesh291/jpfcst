@@ -28,6 +28,12 @@ distanceMatrixCorr <- function(dataset){
   return(distance)
 }
 
+distanceMatrixDTW <- function(dataset){
+  dissimilarity <- 1 - abs(cor(t(timeseries_meter_data),use = "pairwise.complete.obs",method = "pearson"))
+  dissimilarity <- dtwDist(t(timeseries_meter_data))
+  distance <- as.dist(dissimilarity)
+  return(distance)
+}
 
 
 ts_correlation <- function(ts_data,method){
