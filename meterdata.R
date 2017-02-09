@@ -22,12 +22,18 @@ dev.off()
 
 # Compute DBSCAN using fpc package
 set.seed(123)
-db <- fpc::dbscan(dists, eps = 5, MinPts = 3, showplot = 2);                                    # Calls DBSCAN routine (eps = 10 and MinPts is set to its default, which is 5).
+db <- fpc::dbscan(dists, eps = 3, MinPts = 3, showplot = 2);                                    # Calls DBSCAN routine (eps = 10 and MinPts is set to its default, which is 5).
 db;                                                                 # Shows DBSCAN result.
 
 # Plot DBSCAN results
 plot(db, dists, main = "DBSCAN", frame = FALSE)
+dev.off()
 
+plot(db$cluster == 0)
+plot(dists, col=db$cluster)
+
+
+pl[ds$cluster==1,]
 
 #cluster and plot
 # hc <- hclust(dists)
