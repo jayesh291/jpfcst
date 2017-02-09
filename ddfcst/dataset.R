@@ -1,5 +1,4 @@
 trained_data_set <- function(traindata_filename){
-  traindata_filename="temp_dmd_data_daily.txt"
   meterdata <-
     read.csv(
       traindata_filename,

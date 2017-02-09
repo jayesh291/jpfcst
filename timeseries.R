@@ -1,4 +1,4 @@
-#install.packages("reshape","corrplot","data.table","psych","plotrix")
+# install.packages("dbscan")
 
 
 rm(list = ls())
@@ -10,6 +10,7 @@ library(corrplot)
 library(data.table)
 library(psych)
 library(plotrix)
+library(fpc)
 
 source("C:/jp/git/jpfcst/jpfcst/functions.R")
 source("C:/jp/git/jpfcst/jpfcst/dataset.R")
