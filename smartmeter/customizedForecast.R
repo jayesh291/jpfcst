@@ -1,6 +1,7 @@
 source("dataset.R")
 source("libs.R")
 source("constants.R")
+source("dataset.R")
 source("movingAverage.R")
 source("weightedMovingAverage.R")
 source("dailyPattern.R")
