@@ -1,6 +1,5 @@
 
 getwd()
-setwd("/Users/dewadkar/Desktop/ikl/delmon/git/jpfcst/smartmeter/")
 source("customizedForecast.R")
 
 meterdata <- trained_data_set("dmd_data_daily_170112.txt")
