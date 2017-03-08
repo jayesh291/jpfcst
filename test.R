@@ -169,3 +169,51 @@ library(wavelets)
    print("Negative number")
  }
  
+ 
+ 
+ data <- as.data.frame(matrix(rnorm(n=500000*40), ncol=40))
+ 
+   
+   # Create transposed data matrix
+   data.matrix.t <- t(as.matrix(data))
+ 
+ # Create distance matrix
+ dists <- dist(data.matrix.t)
+ 
+ # Clustering
+ hcl <- hclust(dists)
+ 
+ # Plot
+ plot(hcl)
+ 
+ 
+ 
+ 
+ install.packages("dplyr")
+ library(dplyr)
+ 
+ set.seed(1234)
+ dat <- data.frame(x = rnorm(10, 30, .2), 
+                   y = runif(10, 3, 5),
+                   z = runif(10, 10, 20))
+ dat
+ 
+ dat2 <- dat %>% mutate_each_(funs(scale(.) %>% as.vector), 
+                              vars=c("y","z"))
+ dat2
+ 
+ 
+ 
+ # Load the data 
+ # Make sure that the package factoextra is installed
+ install.packages( "factoextra")
+ data("multishapes", package = "factoextra")
+ df <- multishapes[, 1:2]
+
+   library("fpc")
+ # Compute DBSCAN using fpc package
+ set.seed(123)
+ db <- fpc::dbscan(df, eps = 0.15, MinPts = 5)
+ # Plot DBSCAN results
+ plot(db, df, main = "DBSCAN", frame = FALSE)
+ 

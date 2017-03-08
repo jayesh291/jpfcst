@@ -1,5 +1,6 @@
 library(xts)
 
+setwd("C:/jp/git/jpfcst/jpfcst")
 
 source("ddfcst/libs.R")
 source("ddfcst/constants.R")
@@ -10,7 +11,7 @@ source("ddfcst/timeseriesProcessing.R")
 source("ddfcst/plots.R")
 source("ddfcst/forecast.R")
 
-#   meterdata <- trained_data_set("temp_dmd_data_daily.txt")
+meterdata <- trained_data_set("./dmd_data_daily_170112.txt")
 # str(meterdata)
 # plot_daily_meter_consumption(meterdata,daily_dmd_plot_filename)
 timeseriesData <- preprocess(meterdata)
