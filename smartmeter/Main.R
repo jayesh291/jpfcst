@@ -12,10 +12,8 @@ source("ratioPrevMA.R")
 meterdata <- trained_data_set("temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
-Sys.time()
-format(Sys.time(), "%a%b%d%X%Y")
-Sys.Date()
-pdf(file="./outs/fctplot_5_Mar.pdf")
+todaysDate <-format(Sys.time(), "%a%b%d%Y")
+pdf(file=paste0("./outs/fctplot",todaysDate,".pdf"))
 errorSummary <- c()
 noOfDaystoPredict <- 7
 for(meterid in meterids){
@@ -27,8 +25,8 @@ for(meterid in meterids){
   rdpwm <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
   forecastData <- cbind(tsMeterData,ma,dailyPatterns,rdpwm)
   fc <- as.data.frame(forecastData)
-  mtrDataFileName <- paste0("./outs/validate_case1_",meterid,".csv")
-  write.csv(fc,file=mtrDataFileName)
+  # mtrDataFileName <- paste0("./outs/validate_case1_",meterid,".csv")
+  # write.csv(fc,file=mtrDataFileName)
 #  Plot the graph with actual and predicted
   plot(0,0,xlim = c(1,length(fc$tsMeterData)),ylim = c(min(singleMeterData$val),max(singleMeterData$val)),type = "n",xlab = meterid)
   lines(fc$tsMeterData,type = 'l')
@@ -48,17 +46,17 @@ for(meterid in meterids){
   df.fc <- as.data.frame(datas)
   # Forecast error : Average of MAPE 
   mapeMean=mean(mapeForecastError[length(mapeForecastError)-15:(length(mapeForecastError)-8)])
-  errorSummary <- c(errorSummary,mapeMen)
-  fileName <- paste0("./outs/",meterid,"mape",mapeMen,".csv")
+  errorSummary <- c(errorSummary,mapeMean)
+  fileName <- paste0("./outs/",meterid,"mape_",mapeMean,"_",todaysDate,".csv")
   write.csv(df.fc,file=fileName)
 }
 # Create errorSummary for the forecast and save in csv
 mtr.data <- c()
 mtr.data$ids <- unique(meterdata$id)
 mtr.data$errorSummary <- errorSummary
-mtr.data.srt <- mtr.data[order(errorSummary),]
-mtr.data.df <- as.data.frame(mtr.data)
+mtr.data.df <- as.data.frame(unique(meterdata$id),errorSummary)
 mtr.data.srt <- mtr.data.df[order(errorSummary),]
-write.csv(mtr.data.srt, file="./outs/errorSummary.csv")
+write.csv(mtr.data.srt, file=paste0("./outs/errorSummary",todaysDate,".csv"))
 # off the graphics 
 dev.off()
+
