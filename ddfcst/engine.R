@@ -23,14 +23,14 @@ tsHclust <- function(distance, numOfClust) {
 }
 
 distanceMatrixCorr <- function(dataset){
-  dissimilarity <- 1 - abs(cor(t(timeseries_meter_data),use = "pairwise.complete.obs",method = "pearson"))
+  dissimilarity <- 1 - abs(cor(t(dataset),use = "pairwise.complete.obs",method = "pearson"))
   distance <- as.dist(dissimilarity)
   return(distance)
 }
 
 distanceMatrixDTW <- function(dataset){
-  dissimilarity <- 1 - abs(cor(t(timeseries_meter_data),use = "pairwise.complete.obs",method = "pearson"))
-  dissimilarity <- dtwDist(t(timeseries_meter_data))
+  dissimilarity <- 1 - abs(cor(t(dataset),use = "pairwise.complete.obs",method = "pearson"))
+  dissimilarity <- dtwDist(t(datase))
   distance <- as.dist(dissimilarity)
   return(distance)
 }
