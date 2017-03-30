@@ -1,10 +1,7 @@
-n=7
-unitData = tsMeterData
-
 movingAverage <- function(unitData, n, centered=FALSE) {
   before <- n-1
   after  <- 0
-  valCount <- length(unitData)+n
+  valCount <- length(unitData)
   sumofData     <- rep(0, valCount)
   count <- rep(0, valCount)
   new <- unitData
