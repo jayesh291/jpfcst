@@ -15,7 +15,7 @@ library(gdata)
 meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
-meterid <- "0071CFB0-D92D-4035-ABA6-1AB961E4F573"
+meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
 todaysDate <-format(Sys.time(), "%a%b%d%Y%H%S")
 pdf(file=paste0("./outs/fctplot",todaysDate,".pdf"))
 errorSummary <- c()
@@ -26,6 +26,7 @@ for(meterid in meterids){
   tsMeterData <- singleMeterData$val
   ma <- movingAverage(tsMeterData,noOfDaystoPredict)
   singleMeterData$ma <- ma
+  meterid
   # Need to handle spike and vally's
   baseValue <- basevalue(tsMeterData,noOfDaystoPredict)
   singleMeterData$baseValue <- baseValue
@@ -35,7 +36,7 @@ for(meterid in meterids){
   singleMeterData$trend <- trend
   prediction <- baseValue*dailyPatterns*trend
   singleMeterData$pred <- prediction
-  write.csv(singleMeterData,file = paste0("./outs/",meterid,".csv"))
+  write.csv(singleMeterData,file = paste0("./outs/",meterid,"_test3.csv"))
   forecastData <- cbind(tsMeterData,prediction)
   fc <- as.data.frame(forecastData)
   #  Plot the graph with actual and predicted
