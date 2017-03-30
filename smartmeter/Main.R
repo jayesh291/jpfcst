@@ -1,15 +1,23 @@
-
+rm(list = ls())
 getwd()
+source("dataset.R")
+source("libs.R")
+source("constants.R")
+source("dataset.R")
+source("movingAverage.R")
+source("weightedMovingAverage.R")
+source("dailyPattern.R")
+source("ratioPrevMA.R")
 source("customizedForecast.R")
 
-meterdata <- trained_data_set("dmd_data_daily_170112.txt")
+meterdata <- trained_data_set(train_data_set_filename)
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
-pdf(file="./outs/fctplot_5_Mar.pdf")
+pdf(file=forecast_plot_filename)
+
 for(meterid in meterids){
   singleMeterData <- meterdata[meterdata$id == meterid,]
   singleMeterData[is.na(singleMeterData)] <- 0
-  forecastikl(singleMeterData$val,7)
   fc <- forecastikl(singleMeterData$val,7)
   plot(0,0,xlim = c(1,length(fc$tsMeterData)),ylim = c(min(singleMeterData$val),max(singleMeterData$val)),type = "n",xlab = meterid)
   lines(fc$tsMeterData,type = 'l')

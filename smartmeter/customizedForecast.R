@@ -1,20 +1,13 @@
-source("dataset.R")
-source("libs.R")
-source("constants.R")
-source("dataset.R")
-source("movingAverage.R")
-source("weightedMovingAverage.R")
-source("dailyPattern.R")
-source("ratioPrevMA.R")
+tsMeterData = singleMeterData$val
+frame = 7
 #' Forecast time sereis
 #'
 #' A template to forecast daily, monthly and yearly  time sereis data
-#' @param timesereis data as single column
+#' @param tsMeterData data as single column
 #' @param frame is number of items to define a cycle of ts
 #' @return Forecasted time sereis
 #' @export
-forecastikl <- function(timesereis, frame) {
-  tsMeterData <- timesereis
+forecastikl <- function(tsMeterData, frame) {
   ma <- movingAverage(tsMeterData,n=frame)
   weights <- c(0.80,0.85,0.9,0.95,1.05,1.1,1.15)
   wmv <- weightedMovingAverage(ma,weights)
