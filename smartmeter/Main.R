@@ -29,7 +29,7 @@ for(meterid in meterids){
   # Need to handle spike and vally's
   baseValue <- basevalue(tsMeterData,noOfDaystoPredict)
   singleMeterData$baseValue <- baseValue
-  dailyPatterns <- dailyPattern(ma,noOfDaystoPredict)
+  dailyPatterns <- dailyPattern(tsMeterData,ma,noOfDaystoPredict)
   singleMeterData$dailyPattern <- dailyPatterns
   trend <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
   singleMeterData$trend <- trend

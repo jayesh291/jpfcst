@@ -1,4 +1,4 @@
-dailyPattern <- function(movingAverage,noOfDays){
+dailyPattern <- function(tsMeterData,movingAverage,noOfDays){
   dpwma <- c()
   i=1
   for(element in movingAverage){

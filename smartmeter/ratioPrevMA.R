@@ -1,10 +1,10 @@
-ratioPrevMA <- function(ma,dailyPattern,noOfDays){
+ratioPrevMA <- function(ma,dailyPatterns,noOfDays){
   
   rdpwma <- c()
   i=1
-  for(element in dailyPattern){
+  for(element in dailyPatterns){
     if( i > 2){
-      rdpwma[i] <-ma[i - 1]/ma[i - 2]  
+      rdpwma[i] <-dailyPatterns[i - 1]/dailyPatterns[i - 2]  
     }else{
       rdpwma[i] <- 1
     }
