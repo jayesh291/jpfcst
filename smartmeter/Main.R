@@ -12,7 +12,7 @@ source("dailyPattern.R")
 source("ratioPrevMA.R")
 library(gdata)
 
-meterdata <- trained_data_set("./inputs/daily_dmd_data_20170327.txt")
+meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
 todaysDate <-format(Sys.time(), "%a%b%d%Y")
@@ -36,10 +36,9 @@ for(meterid in meterids){
   prediction <- baseValue*dailyPatterns*trend
   
   singleMeterData$pred <- prediction
-  # write.csv(singleMeterData,file = paste0("./outs/",meterid,".csv"))
   forecastData <- cbind(tsMeterData,prediction)
   fc <- as.data.frame(forecastData)
-#  Plot the graph with actual and predicted
+  #  Plot the graph with actual and predicted
   plot(0,0,xlim = c(1,length(fc$tsMeterData)),ylim = c(min(singleMeterData$val),max(singleMeterData$val)),type = "n",xlab = meterid)
   lines(fc$tsMeterData,type = 'l')
   lines(singleMeterData$val[1:(length(tsMeterData)-noOfDaystoPredict)],type = 'l',col="blue")
@@ -66,9 +65,10 @@ for(meterid in meterids){
 mtr.data <- c()
 mtr.data$ids <- unique(meterdata$id)
 mtr.data$errorSummary <- errorSummary
-mtr.data.df <- as.data.frame(unique(meterdata$id),errorSummary)
+mtr.data.df <- as.data.frame(mtr.data)
 mtr.data.srt <- mtr.data.df[order(errorSummary),]
 write.csv(mtr.data.srt, file=paste0("./outs/errorSummary",todaysDate,".csv"))
+# quantile(errorSummary)
 # off the graphics 
 dev.off()
 
