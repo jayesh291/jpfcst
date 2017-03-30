@@ -1,10 +1,14 @@
-dailyPattern <- function(orgData,weightedMovingAverage,noOfDays){
+orgData = tsMeterData
+movingAverage = ma
+noOfDays = noOfDaystoPredict
+
+dailyPattern <- function(orgData,movingAverage,noOfDays){
   dpwma <- c()
   i=1
   weightCount=1
-  for(element in weightedMovingAverage){
+  for(element in movingAverage){
     if( i > noOfDays){
-      dpwma[i] <- element* orgData[i - noOfDays]/weightedMovingAverage[i - noOfDays]  
+      dpwma[i] <- element* orgData[i - noOfDays]/movingAverage[i - noOfDays]  
     }else{
       dpwma[i] <- element
     }
