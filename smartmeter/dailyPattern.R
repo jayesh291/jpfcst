@@ -1,6 +1,6 @@
-orgData = tsMeterData
-movingAverage = ma
-noOfDays = noOfDaystoPredict
+# orgData = tsMeterData
+# movingAverage = ma
+# noOfDays = noOfDaystoPredict
 
 dailyPattern <- function(orgData,movingAverage,noOfDays){
   dpwma <- c()

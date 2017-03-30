@@ -1,5 +1,5 @@
-n=7
-unitData = tsMeterData
+# n=7
+# unitData = tsMeterData
 
 movingAverage <- function(unitData, n, centered=FALSE) {
   before <- n-1
