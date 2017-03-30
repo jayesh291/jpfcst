@@ -2,13 +2,14 @@ rm(list = ls())
 
 
 getwd()
-# setwd()
+setwd("smartmeter/")
 source("libs.R")
 source("dataset.R")
 source("movingAverage.R")
 source("weightedMovingAverage.R")
 source("dailyPattern.R")
 source("ratioPrevMA.R")
+library(gdata)
 
 meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
@@ -21,13 +22,16 @@ for(meterid in meterids){
   singleMeterData <- meterdata[meterdata$id == meterid,]
   singleMeterData[is.na(singleMeterData)] <- 0
   tsMeterData <- singleMeterData$val
+  # write.csv(singleMeterData,file = "./outs/meterdata.csv")
   ma <- movingAverage(tsMeterData,noOfDaystoPredict)
+  singleMeterData$ma <- ma
   dailyPatterns <- dailyPattern(tsMeterData,ma,noOfDaystoPredict)
+  singleMeterData$dailyPattern <- dailyPatterns
   rdpwm <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
+  singleMeterData$trend <- rdpwm
+  write.csv(singleMeterData,file = "./outs/meterdata_ma_dp_trend_v2.csv")
   forecastData <- cbind(tsMeterData,ma,dailyPatterns,rdpwm)
   fc <- as.data.frame(forecastData)
-  # mtrDataFileName <- paste0("./outs/validate_case1_",meterid,".csv")
-  # write.csv(fc,file=mtrDataFileName)
 #  Plot the graph with actual and predicted
   plot(0,0,xlim = c(1,length(fc$tsMeterData)),ylim = c(min(singleMeterData$val),max(singleMeterData$val)),type = "n",xlab = meterid)
   lines(fc$tsMeterData,type = 'l')
