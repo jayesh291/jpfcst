@@ -12,7 +12,7 @@ source("dailyPattern.R")
 source("ratioPrevMA.R")
 library(gdata)
 
-meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
+meterdata <- trained_data_set("./inputs/daily_dmd_data_20170327.txt")
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
 todaysDate <-format(Sys.time(), "%a%b%d%Y")
