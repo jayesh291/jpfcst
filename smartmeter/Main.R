@@ -21,26 +21,48 @@ pdf(file=paste0("./outs/fctplot",todaysDate,".pdf"))
 errorSummary <- c()
 noOfDaystoPredict <- 7
 for(meterid in meterids){
+  testcnt=1
+  i=1
+  if(i > testcnt){
+    break
+  }
+  testcnt <- testcnt + 1
   singleMeterData <- meterdata[meterdata$id == meterid,]
   singleMeterData[is.na(singleMeterData)] <- 0
-  tsMeterData <- singleMeterData$val
-  length(tsMeterData)
-  ma <- movingAverage(tsMeterData,noOfDaystoPredict)
-  length(ma)
-  singleMeterData <- rbind(singleMeterData,c(meterid,todaysDate,NA,NA)) 
-  nrow(singleMeterData)
-  singleMeterData$ma <- ma
-  # Need to handle spike and vally's
-  baseValue <- basevalue(tsMeterData,noOfDaystoPredict)
-  singleMeterData$baseValue <- baseValue
-  dailyPatterns <- dailyPattern(tsMeterData,ma,noOfDaystoPredict)
-  length(dailyPatterns)
-  singleMeterData$dailyPattern <- dailyPatterns
-  trend <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
-  singleMeterData$trend <- trend
-  prediction <- baseValue*dailyPatterns*trend
-  singleMeterData$pred <- prediction
+  
+  countr = 1;
+  while(countr < 3){
+    countr <- countr + 1
+    tsMeterData <- singleMeterData$val
+    ma <- movingAverage(tsMeterData,noOfDaystoPredict)
+    if(countr ==1){
+      nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
+      singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay)) 
+      
+    }else{
+      nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
+      singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay,)) 
+    }
+    singleMeterData$ma <- ma
+    # Need to handle spike and vally's
+    baseValue <- basevalue(tsMeterData,noOfDaystoPredict)
+    singleMeterData$baseValue <- baseValue
+    dailyPatterns <- dailyPattern(tsMeterData,ma,noOfDaystoPredict)
+    length(dailyPatterns)
+    singleMeterData$dailyPattern <- dailyPatterns
+    trend <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
+    singleMeterData$trend <- trend
+    prediction <- baseValue*dailyPatterns*trend
+    singleMeterData$pred <- prediction
+    singleMeterData[nrow(singleMeterData),"val"]<- prediction[length(prediction)]
+    # appendSingleMeterData <- 
+    str(singleMeterData)
+    # write.csv(singleMeterData,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
+    
+  }
+  str(singleMeterData)
   write.csv(singleMeterData,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
+  
   forecastData <- cbind(tsMeterData,prediction)
   fc <- as.data.frame(forecastData)
   #  Plot the graph with actual and predicted
