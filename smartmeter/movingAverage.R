@@ -1,7 +1,7 @@
 # Moving avg excluding the day, for current use prev n days avg 
 movingAverage <- function(unitData, n){
   ma <- c()
-  for(j in 1:length(unitData)){
+  for(j in 1:(length(unitData)+1)){
     if(j <= n){
       ma[j] <- unitData[j]
     }else{

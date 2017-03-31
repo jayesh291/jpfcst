@@ -24,19 +24,23 @@ for(meterid in meterids){
   singleMeterData <- meterdata[meterdata$id == meterid,]
   singleMeterData[is.na(singleMeterData)] <- 0
   tsMeterData <- singleMeterData$val
+  length(tsMeterData)
   ma <- movingAverage(tsMeterData,noOfDaystoPredict)
+  length(ma)
+  singleMeterData <- rbind(singleMeterData,c(meterid,todaysDate,NA,NA)) 
+  nrow(singleMeterData)
   singleMeterData$ma <- ma
-  meterid
   # Need to handle spike and vally's
   baseValue <- basevalue(tsMeterData,noOfDaystoPredict)
   singleMeterData$baseValue <- baseValue
   dailyPatterns <- dailyPattern(tsMeterData,ma,noOfDaystoPredict)
+  length(dailyPatterns)
   singleMeterData$dailyPattern <- dailyPatterns
   trend <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
   singleMeterData$trend <- trend
   prediction <- baseValue*dailyPatterns*trend
   singleMeterData$pred <- prediction
-  write.csv(singleMeterData,file = paste0("./outs/",meterid,"_test3.csv"))
+  write.csv(singleMeterData,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
   forecastData <- cbind(tsMeterData,prediction)
   fc <- as.data.frame(forecastData)
   #  Plot the graph with actual and predicted
@@ -46,7 +50,7 @@ for(meterid in meterids){
   lines(fc$prediction,type = 'l', col = "red")
   # Forecast error calulation 
   # MAPE
-  write.csv(singleMeterData,file=paste0("./outs/",meterid,"_steps.csv"))
+  # write.csv(singleMeterData,file=paste0("./outs/",meterid,"_steps.csv"))
   forecastError <- fc$tsMeterData[1:(length(fc$prediction)-8)]-fc$prediction[1:(length(fc$prediction)-8)]
   mapeForecastError <- abs(forecastError/fc$tsMeterData[1:(length(trend)-8)]) * 100
   mapeForecastError[is.na(mapeForecastError)] <- 0.00001

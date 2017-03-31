@@ -1,6 +1,6 @@
 basevalue <- function(timeseriesdata,noOfDaystoPredict){
   basevalue<-c()
-  for(i in 1:length(timeseriesdata)){
+  for(i in 1:(length(timeseriesdata)+1)){
     if(i > noOfDaystoPredict){
       basevalue[i] <- timeseriesdata[i - noOfDaystoPredict]
     }else{
