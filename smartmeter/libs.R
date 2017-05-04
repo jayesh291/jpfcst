@@ -8,6 +8,7 @@ library(dtw)
 library(zoo)
 library(proxy)
 library(forecast)
+library(timeDate)
 # proxy supports many dist calculation
 # <start> 
 # "Jaccard" "Kulczynski1" "Kulczynski2" "Mountford" "Fager" "Russel" "simple matching" "Hamman" "Faith"
