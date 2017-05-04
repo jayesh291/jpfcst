@@ -12,10 +12,10 @@ source("dailyPattern.R")
 source("ratioPrevMA.R")
 library(gdata)
 
-meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
+meterdata <- trained_data_set("./inputs/daily_dmd_data_20170327.txt")
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
-meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
+meterid <- "150EBA46-26EB-4E0C-A6B9-5BE5043CCD61"
 todaysDate <-format(Sys.time(), "%a%b%d%Y%H%S")
 pdf(file=paste0("./outs/fctplot",todaysDate,".pdf"))
 errorSummary <- c()
