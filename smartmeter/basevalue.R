@@ -11,6 +11,19 @@ basevalue <- function(timeseriesdata,noOfDaystoPredict){
 }
 
 
+basevalueForLongPrediction <- function(tsMeterData , numOfDays, prevWeeks){
+  numOfDaysToPredict <- numOfDays*prevWeeks
+  basevalue<-c()
+  for(i in 1:(length(tsMeterData)+1)){
+    if(i > numOfDaysToPredict){
+      basevalue[i] <- tsMeterData[i - numOfDaysToPredict]
+    }else{
+      basevalue[i] <- tsMeterData[i]
+    }
+  }
+  return(basevalue)
+}
+
 # basevalueAvg <- function(timeseriesdata,noOfDaystoPredict){
 #   bValues<-c()
 #   for(i in 1:length(timeseriesdata)){

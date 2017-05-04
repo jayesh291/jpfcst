@@ -1,9 +1,9 @@
 dailyPattern <- function(tsMeterData,movingAverage,noOfDays){
   dpwma <- c()
   i=1
-  for(element in movingAverage){
+  for(i in 1:(length(tsMeterData)+1)){
     if( i > noOfDays){
-      dpwma[i] <- tsMeterData[i-noOfDays]*movingAverage[i]/movingAverage[i - noOfDays]  
+      dpwma[i] <- tsMeterData[i-noOfDays]/movingAverage[i - noOfDays]  
     }else{
       dpwma[i] <- movingAverage[i]
     }

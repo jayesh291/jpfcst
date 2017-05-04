@@ -4,7 +4,7 @@
 movingAverage <- function(unitData, n){
   ma <- c()
   for(j in 1:(length(unitData)+1)){
-    if(j > n){
+    if(j > (n+1)){
       ma[j] <- mean(unitData[(j-n):(j-1)])
     }else{
       ma[j] <- unitData[j]
@@ -12,7 +12,4 @@ movingAverage <- function(unitData, n){
   }
   return(ma)
 }
-
-
-
 
