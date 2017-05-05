@@ -111,35 +111,30 @@ dev.off()
 
 
 
-# Handling missing dates
-
-singleMeterData <- meterdata[meterdata$id == meterid,]
-nrow(singleMeterData)
-
-totalDiffDays <- abs(singleMeterData$ts1[1] - singleMeterData$ts1[length(singleMeterData$ts1)])
-alldays <- seq(singleMeterData$ts1[1],length=totalDiffDays,by="+1 day")
-alldays %in% singleMeterData$ts1
-length(alldays)
-
+# # missing dates impute: 
+# singleMeterData <- meterdata[meterdata$id == meterid,]
+# nrow(singleMeterData)
+# totalDiffDays <- abs(singleMeterData$ts1[1] - singleMeterData$ts1[length(singleMeterData$ts1)])
+# alldays <- seq(singleMeterData$ts1[1],length=totalDiffDays,by="+1 day")
 # alldays %in% singleMeterData$ts1
-dates0 = alldays[!(alldays %in% singleMeterData$ts1)]
-# data0 = data.frame(dates = dates0, values = NA_real_)
-# data0
-# Append this `data.frame` and resort in time:
-dates0
-counter <- 1
-data <- singleMeterData
-while(i <= length(dates0)){
-  tempDate <- format(as.Date(dates0[i], origin="1970-01-01"),"%Y-%m-%d")
-  data = rbind(data, c(meterid,as.character(tempDate),NA,tempDate))
-  i <- i+1
-}
-
-alldays %in% data$ts1
-  data = data[order(data$ts1),]
-nrow(data)
-# View(data)
-# View(singleMeterData)
+# length(alldays)
+# alldays - singleMeterData$ts1
+# length(singleMeterData$ts1)
+# dates0 = alldays[!(alldays %in% singleMeterData$ts1)]
+# # Append this `data.frame` and resort:
+# dates0
+# counter <- 1
+# data <- singleMeterData
+# while(i <= length(dates0)){
+#   tempDate <- format(as.Date(dates0[i], origin="1970-01-01"),"%Y-%m-%d")
+#   data = rbind(data, c(meterid,as.character(tempDate),NA,tempDate))
+#   i <- i+1
+# }
+# alldays %in% data$ts1
+# data = data[order(data$ts1),]
+# nrow(data)
+# # View(data)
+# # View(singleMeterData)
 
 
 
