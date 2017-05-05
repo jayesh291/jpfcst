@@ -12,7 +12,6 @@ source("ratioPrevMA.R")
 source("movingAverage.R")
 source("normalization.R")
 source("scaleFactor.R")
-library(gdata)
 
 meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
@@ -23,24 +22,33 @@ meterid <- "089FB058-CD33-41DD-9AFF-F00795122C6E"
 # meterid <- "0071CFB0−D92D−4035−ABA6−1AB961E4F573"
 meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
 todaysDate <-format(Sys.time(), "%a%b%d%Y%H%S")
+
+pdf(file=paste0("./outs/meters_",todaysDate,"_plot.pdf"))
+# Time series cycle - for weekly pattern of daily data it is 7
 cyclePeriod <- 7
-timeOfPrediction <- 3 
-# for(meterid in meterids){
-  testcnt=1
+# short it will be 1 period to cycle period
+# medium will double the cycle period
+# medium will double the cycle period
+longPrediction <- 3 
+
+  testcnt=length(meterids)
   i=1
-  if(i > testcnt){
-    break
-  }
-  testcnt <- testcnt + 1
+while(i < testcnt){
+  meterid <- sample(meterids,1)
+  message("Processing meter id - ",meterid)
+  i <- i + 1
   singleMeterData <- meterdata[meterdata$id == meterid,]
-  singleMeterData[is.na(singleMeterData)] <- 0
-  if(is.na(singleMeterData)){
+  indx <- apply(singleMeterData, 2, function(x) any(is.na(x) | is.infinite(x)))
+  if(TRUE %in% indx){
     message(" Please check missing data !!! ")
   }
-  countr = 1;
-  # while(countr < 3){
+  countr = 0;
+  while(countr < 3){
     countr <- countr + 1
-    tsMeterData <- singleMeterData$val
+    singleMeterData <- singleMeterData[,c("id","ts","val","ts1")]
+    message("start length ", countr ," - ",nrow(singleMeterData))
+    tsMeterData <-as.numeric(singleMeterData$val)
+    # str(tsMeterData)
     if(countr ==1){
       nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
       singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay))
@@ -48,6 +56,7 @@ timeOfPrediction <- 3
       nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
       singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay))
     }
+    # nrow(singleMeterData)
     tsMeterData[length(tsMeterData)+1] <- 0
     if(length(tsMeterData) != length(singleMeterData$val)){
       message(" Please check - Need to add row in tsMeterData !")
@@ -55,46 +64,82 @@ timeOfPrediction <- 3
     # For long prediction change it from 1 to number of periods i.e. for daily data
     # weekly pattern, so only 3 weeks previous data could work. We can range it from 2,3 and 4 for month.
     prediction <- {}
-    prediction$basevalue <- basevalueForLongPrediction(tsMeterData,cyclePeriod,timeOfPrediction)
+    prediction$basevalue <- basevalueForLongPrediction(tsMeterData,cyclePeriod,longPrediction)
     prediction$movingAverage <- movingAverage(tsMeterData,cyclePeriod)
-    prediction$movingAverage
+    # prediction$movingAverage
     prediction$dailyPattern <- dailyPattern(tsMeterData,prediction$movingAverage,cyclePeriod)
-    prediction$dailyPattern
+    # prediction$dailyPattern
     prediction$maxVector <- maxVector(tsMeterData)
-    prediction$maxVector
-    prediction$normalization <- (prediction$dailyPattern*0.2/prediction$maxVector)+0.9
-    prediction$normalization
+    # prediction$maxVector
+    prediction$normalization <- (prediction$dailyPattern*0.2/3.3)+0.9
+    # prediction$normalization
     prediction$basePrediction <- prediction$basevalue * prediction$normalization
-    prediction$basePrediction 
+    # prediction$basePrediction 
     prediction$minVector <- minVector(prediction$basePrediction,cyclePeriod)
-    prediction$minVector
+    # prediction$minVector
     prediction$minValueWeeklyTrend <- minValueWeeklyTrend(prediction$minVector)
-    prediction$minValueWeeklyTrend
+    # prediction$minValueWeeklyTrend
     prediction$avgMinValues <- minValueAvg(prediction$minValueWeeklyTrend)
-    prediction$avgMinValues
+    # prediction$avgMinValues
     prediction$prediction <- prediction$basePrediction*prediction$avgMinValues
-    prediction$prediction
+    # prediction$prediction
     prediction <- as.data.frame(prediction)
-    str(prediction)
+    nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData),c("ts1")])+2,"%Y-%m-%d")
+    singleMeterData <- rbind(singleMeterData,c(meterid,as.character(nextDay),0,nextDay))
     forecastData <- cbind(singleMeterData,prediction)
+    # str(forecastData)
+    forecastData$val[length(forecastData$val)] <- forecastData$basePrediction[length(forecastData$val)]
+    forecastData$id[length(forecastData$val)] <- meterid
+    # forecastData$ts <- forecastData$ts1
+    
+    message("End length ", countr ," - ",nrow(singleMeterData))
     fc <- as.data.frame(forecastData)
-    write.csv(fc,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
-    plot(0,0,xlim = c(1,length(tsMeterData)),ylim = c(min(tsMeterData),max(tsMeterData)),type = "n",xlab = meterid)
-    lines(tsMeterData,type = 'l')
-    lines(singleMeterData$val,type = 'l',col="blue")
-    lines(singleMeterData$prediction,type = 'l', col = "red")
-  # }
-  # str(singleMeterData)
-  # write.csv(singleMeterData,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
-  # forecastData <- cbind(tsMeterData,prediction)
-  # fc <- as.data.frame(forecastData)
-  # #  Plot the graph with actual and predicted
-  # plot(0,0,xlim = c(1,length(fc$tsMeterData)),ylim = c(min(singleMeterData$val),max(singleMeterData$val)),type = "n",xlab = meterid)
-  # lines(fc$tsMeterData,type = 'l')
-  # lines(singleMeterData$val[1:(length(tsMeterData)-cyclePeriod)],type = 'l',col="blue")
-  # lines(fc$prediction,type = 'l', col = "red")
-# }
+    fc <- fc[-(nrow(fc)-1),]
+    singleMeterData <- fc
+  }
+  
+  
+  write.csv(fc,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
+  try(plot(0,0,xlim = c(1,length(tsMeterData)),ylim = c(min(tsMeterData),max(tsMeterData)),type = "n",xlab = meterid))
+  historicalData <- meterdata[meterdata$id == meterid,]
+  lines(historicalData$val,type = 'l',col="blue")
+  lines(singleMeterData$prediction,type = 'l', col = "red")
+  
+}
 
+dev.off()
+
+
+
+# Handling missing dates
+
+singleMeterData <- meterdata[meterdata$id == meterid,]
+nrow(singleMeterData)
+
+totalDiffDays <- abs(singleMeterData$ts1[1] - singleMeterData$ts1[length(singleMeterData$ts1)])
+alldays <- seq(singleMeterData$ts1[1],length=totalDiffDays,by="+1 day")
+alldays %in% singleMeterData$ts1
+length(alldays)
+
+# alldays %in% singleMeterData$ts1
+dates0 = alldays[!(alldays %in% singleMeterData$ts1)]
+# data0 = data.frame(dates = dates0, values = NA_real_)
+# data0
+# Append this `data.frame` and resort in time:
+dates0
+counter <- 1
+data <- singleMeterData
+while(i <= length(dates0)){
+  tempDate <- format(as.Date(dates0[i], origin="1970-01-01"),"%Y-%m-%d")
+  data = rbind(data, c(meterid,as.character(tempDate),NA,tempDate))
+  i <- i+1
+}
+
+alldays %in% data$ts1
+  data = data[order(data$ts1),]
+nrow(data)
+# View(data)
+# View(singleMeterData)
 
 
 
