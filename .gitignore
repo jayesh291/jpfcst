@@ -10,3 +10,7 @@
 .Rhistory
 .gitignore
 /smartmeter/outs
+/ddfcst
+.pdf
+.csv
+.docx
