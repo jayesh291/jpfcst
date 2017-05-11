@@ -18,12 +18,13 @@ source("timeseriesImpute.R")
 
 meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
-meterid <- sample(meterids,1)
-meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
-meterid <- "0862C02E-73CA-4964-9661-6D783EF2DE7B"
-meterid <- "089FB058-CD33-41DD-9AFF-F00795122C6E"
-# meterid <- "0071CFB0−D92D−4035−ABA6−1AB961E4F573"
-meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
+
+# meterid <- sample(meterids,1)
+# meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
+# meterid <- "0862C02E-73CA-4964-9661-6D783EF2DE7B"
+# meterid <- "089FB058-CD33-41DD-9AFF-F00795122C6E"
+# # meterid <- "0071CFB0−D92D−4035−ABA6−1AB961E4F573"
+# meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
 todaysDate <-format(Sys.time(), "%a%b%d%Y%H%S")
 
 pdf(file=paste0("./outs/meters_",todaysDate,"_plot.pdf"))
@@ -31,23 +32,20 @@ pdf(file=paste0("./outs/meters_",todaysDate,"_plot.pdf"))
 cyclePeriod <- 7
 # short it will be 1 period to cycle period
 # medium will double the cycle period
-# medium will double the cycle period
+# long will triple the cycle period
 
 longPrediction <- 3 
 testcnt=length(meterids)
-testcnt=10
+testcnt=5
 i=1
 while(i < testcnt){
   meterid <- sample(meterids,1)
+  # meterid <- "8F27FE8C-878C-42F8-A9A1-F0B17A54442D"
   message("Processing meter id - ",meterid)
   i <- i + 1
   singleMeterData <- meterdata[meterdata$id == meterid,]
-  message(" before ", nrow(singleMeterData)," -- ")
-  str(singleMeterData)
   singleMeterData <- addMissingDates(data = singleMeterData, "ts1")
-  str(singleMeterData)
   singleMeterData$val <- as.numeric(singleMeterData$val)
-  message(" after ",nrow(singleMeterData)," -- ")
   # missing value will be replaced by 7 days before or after when missing element is at start
   # singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
   singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
@@ -56,10 +54,9 @@ while(i < testcnt){
     message(" Please check missing data !!! ")
   }
   countr = 0;
-  while(countr < 15){
+  while(countr < 100){
     countr <- countr + 1
     singleMeterData <- singleMeterData[,c("id","ts","val","ts1")]
-    message("start length ", countr ," - ",nrow(singleMeterData))
     tsMeterData <-as.numeric(singleMeterData$val)
     # str(tsMeterData)
     if(countr ==1){
@@ -101,11 +98,9 @@ while(i < testcnt){
     singleMeterData <- rbind(singleMeterData,c(meterid,as.character(nextDay),0,nextDay))
     forecastData <- cbind(singleMeterData,prediction)
     # str(forecastData)
-    forecastData$val[length(forecastData$val)] <- forecastData$basePrediction[length(forecastData$val)]
+    forecastData$val[length(forecastData$val)] <- forecastData$basePrediction[length(forecastData$val)-1]
     forecastData$id[length(forecastData$val)] <- meterid
-    # forecastData$ts <- forecastData$ts1
-    
-    message("End length ", countr ," - ",nrow(singleMeterData))
+    forecastData$ts <- forecastData$ts1
     fc <- as.data.frame(forecastData)
     fc <- fc[-(nrow(fc)-1),]
     singleMeterData <- fc
