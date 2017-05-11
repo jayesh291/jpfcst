@@ -36,9 +36,9 @@ cyclePeriod <- 7
 
 longPrediction <- 3 
 testcnt=length(meterids)
-testcnt=5
+testcnt=20
 i=1
-while(i < testcnt){
+while(i <= testcnt){
   meterid <- sample(meterids,1)
   # meterid <- "8F27FE8C-878C-42F8-A9A1-F0B17A54442D"
   message("Processing meter id - ",meterid)
@@ -105,7 +105,6 @@ while(i < testcnt){
     fc <- fc[-(nrow(fc)-1),]
     singleMeterData <- fc
   }
-  
   
   write.csv(fc,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
   try(plot(0,0,xlim = c(1,length(tsMeterData)),ylim = c(min(tsMeterData),max(tsMeterData)),type = "n",xlab = meterid))
