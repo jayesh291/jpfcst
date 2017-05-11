@@ -12,6 +12,9 @@ source("ratioPrevMA.R")
 source("movingAverage.R")
 source("normalization.R")
 source("scaleFactor.R")
+source("datesUtil.R")
+source("timeseriesImpute.R")
+
 
 meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
 meterids <- unique(meterdata$id)
@@ -29,21 +32,31 @@ cyclePeriod <- 7
 # short it will be 1 period to cycle period
 # medium will double the cycle period
 # medium will double the cycle period
-longPrediction <- 3 
 
-  testcnt=length(meterids)
-  i=1
+longPrediction <- 3 
+testcnt=length(meterids)
+testcnt=10
+i=1
 while(i < testcnt){
   meterid <- sample(meterids,1)
   message("Processing meter id - ",meterid)
   i <- i + 1
   singleMeterData <- meterdata[meterdata$id == meterid,]
+  message(" before ", nrow(singleMeterData)," -- ")
+  str(singleMeterData)
+  singleMeterData <- addMissingDates(data = singleMeterData, "ts1")
+  str(singleMeterData)
+  singleMeterData$val <- as.numeric(singleMeterData$val)
+  message(" after ",nrow(singleMeterData)," -- ")
+  # missing value will be replaced by 7 days before or after when missing element is at start
+  # singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
+  singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
   indx <- apply(singleMeterData, 2, function(x) any(is.na(x) | is.infinite(x)))
   if(TRUE %in% indx){
     message(" Please check missing data !!! ")
   }
   countr = 0;
-  while(countr < 3){
+  while(countr < 15){
     countr <- countr + 1
     singleMeterData <- singleMeterData[,c("id","ts","val","ts1")]
     message("start length ", countr ," - ",nrow(singleMeterData))
@@ -71,7 +84,7 @@ while(i < testcnt){
     # prediction$dailyPattern
     prediction$maxVector <- maxVector(tsMeterData)
     # prediction$maxVector
-    prediction$normalization <- (prediction$dailyPattern*0.2/3.3)+0.9
+    prediction$normalization <- (prediction$dailyPattern*0.2/prediction$maxVector)+0.9
     # prediction$normalization
     prediction$basePrediction <- prediction$basevalue * prediction$normalization
     # prediction$basePrediction 
@@ -109,32 +122,74 @@ while(i < testcnt){
 
 dev.off()
 
+  
+  # missing dates impute:
+singleMeterData <- meterdata[meterdata$id == meterid,]
+nrow(singleMeterData)
+plot(singleMeterData$val,type="l")
+retrivedSMD <- addMissingDates(singleMeterData, "ts1")
+nrow(retrivedSMD)
+
+singleMeterData$val <- as.numeric(singleMeterData$val)
+# acf(singleMeterData$val)
+# rm(addMissingDates)
+source("datesUtil.R")
+retrivedSMD <- addMissingDates(data = singleMeterData, "ts1")
+nrow(retrivedSMD)
+View(retrivedSMD)
 
 
-# # missing dates impute: 
-# singleMeterData <- meterdata[meterdata$id == meterid,]
-# nrow(singleMeterData)
-# totalDiffDays <- abs(singleMeterData$ts1[1] - singleMeterData$ts1[length(singleMeterData$ts1)])
-# alldays <- seq(singleMeterData$ts1[1],length=totalDiffDays,by="+1 day")
-# alldays %in% singleMeterData$ts1
-# length(alldays)
-# alldays - singleMeterData$ts1
-# length(singleMeterData$ts1)
-# dates0 = alldays[!(alldays %in% singleMeterData$ts1)]
-# # Append this `data.frame` and resort:
-# dates0
-# counter <- 1
-# data <- singleMeterData
-# while(i <= length(dates0)){
-#   tempDate <- format(as.Date(dates0[i], origin="1970-01-01"),"%Y-%m-%d")
-#   data = rbind(data, c(meterid,as.character(tempDate),NA,tempDate))
-#   i <- i+1
-# }
-# alldays %in% data$ts1
-# data = data[order(data$ts1),]
-# nrow(data)
-# # View(data)
-# # View(singleMeterData)
+#  Impute values for the missing dates
+df <- retrivedSMD
+colnames(df)
+
+# using hmisc package
+str(df)
+df$val <- as.numeric(df$val)
+df$val <- with(df, impute(val, mean))
+df$val
+
+# using imputeTS package
+df <- retrivedSMD
+df$val <- as.numeric(df$val)
+simple <- na.ma(df$val, k = 7, weighting = "simple")
+linear <- na.ma(df$val, k = 7, weighting = "linear")
+expon <- na.ma(df$val, k = 7, weighting = "exponential")
+# Plots
+par(mfrow=c(1,2))
+plot(0,0,xlim = c(1,length(df$val)),ylim = c(min(df$val,na.rm = TRUE),max(df$val,na.rm = TRUE)),type = "n",xlab = meterid)
+lines(simple,type = 'l',col="blue")
+lines(linear,type = 'l', col = "red")
+lines(expon,type = 'l', col = "green")
+lines(df$val,type = 'l', col = "orange")
+par(mfrow=c(1,1))
+
+
+# Customized impute
+rm(imputeFromNumOfDaysBefore)
+source("timeseriesImpute.R")
+df <- retrivedSMD
+sevanDays <- imputeFromNumOfDaysBefore(df$val,7)
+# df$val <- sevanDays
+twoWeeks <- imputeFromNumOfDaysBefore(df$val,14)
+# df$val <- twoWeeks
+df$val <- as.numeric(df$val)
+plot(0,0,xlim = c(1,length(df$val)),ylim = c(min(df$val,na.rm = TRUE),max(df$val,na.rm = TRUE)),type = "n",xlab = meterid)
+lines(df$val,type = 'l',col="blue")
+lines(sevanDays,type = 'l', col = "red")
+lines(twoWeeks,type = 'l', col = "green")
+
+# write.csv(file = "./outs/df1.csv",df)
+
+install.packages("mi")
+library(mi)
+df <- retrivedSMD
+df$val <- as.numeric(df$val)
+mdf <- missing_data.frame(df[,c(-4)])
+mdf
+mia <- mi(mdf)
+
+
 
 
 
