@@ -17,5 +17,13 @@ maxVector <- function(mdata,originalTs,cyclePeriod){
   return(maxVector)
 }
 
-# maxV <- maxVector(singleMeterData$val,singleMeterData$val,7)
+
+maxNormalization <- function(x,y){
+  x <- ifelse(x<y,x,y*(x*cyclePeriod/10))
+  return(x)
+}
+
+# originalTs <- meterdata[meterdata$id == meterid,]
+# as.numeric(singleMeterData$val)-originalTs$val
+# maxV <- maxVector(as.numeric(singleMeterData$val),originalTs$val ,7)
 # maxV
