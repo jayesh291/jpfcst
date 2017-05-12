@@ -14,3 +14,6 @@
 .pdf
 .csv
 .docx
+/smartmeter/Main_*
+*.zip
+*.Rproj
