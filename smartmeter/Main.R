@@ -36,7 +36,7 @@ longPrediction <- 3
 testcnt=length(meterids)
 # testcnt=100
 i=1
-
+error_summary <- c("id","mape")
 
 while(i <= testcnt){
   meterid <- sample(meterids,1)
@@ -134,21 +134,8 @@ while(i <= testcnt){
     abs_error <- abs(as.numeric(singleMeterData$val) - as.numeric(singleMeterData$prediction))/(as.numeric(singleMeterData$val))
     mape <- sum(abs_error,na.rm = TRUE)*100/nrow(singleMeterData)
     mape
+    error_summary <- rbind(error_summary,c(as.character(meterid),as.numeric(mape)))
 }
+
+write.csv(file = paste0("./outs/error_summary",todaysDate,".csv"),error_summary)
 dev.off()
-
-
-
-forecast_error <- function(originaldata,predictedata){
-  
-}
-
-
-
-
-# adjustedBasePrediction <- function(data){
-#   
-#   data$basePrediction
-#   nPrediction <- apply(data$basePrediction,data$maxVector, function(x,y) ifelse(x<y,x,y))
-#   
-# }
