@@ -17,7 +17,7 @@ addMissingDates <- function(data,dateCol) {
   # Append this `data.frame` and resort:
   i <- 1
   while(i <= length(missingDates)){
-    message(" i loopings -> ",i)
+    message(" i loopings -> ",i, " -- ",as.POSIXct(missingDates[i]))
     tempDate <- format(as.POSIXct(missingDates[i], origin="1970-01-01"),"%Y-%m-%d")
     data = rbind(data, c(as.character(meterid),as.character(tempDate),NA,tempDate),stringsAsFactors = FALSE)
     i <- i+1
