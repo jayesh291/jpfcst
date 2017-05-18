@@ -1,7 +1,6 @@
 rm(list = ls())
 
 
-
 getwd()
 setwd("smartmeter/")
 source("libs.R")
