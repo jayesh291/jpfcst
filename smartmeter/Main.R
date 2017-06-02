@@ -13,8 +13,33 @@ source("datesUtil.R")
 source("timeseriesImpute.R")
 
 
-meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
+# meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt") -- old V1
+meterdata <- trained_data_set("./inputs/daily_dmd_data_20170517.txt")
+
 meterids <- unique(meterdata$id)
+length(meterids)
+filter_ids <- c("bdfa1158-4ab7-4f0d-9435-cb9be9fdebf9","b1de3a4a-2413-45bd-8fcf-749634b33368",
+                "e930c633-ac33-40da-81d1-b5d374a93acf","75a448af-fc1c-44df-891b-8578d9745882")
+meterids %in% c(filter_ids)
+meterids <- subset(meterids, !(meterids %in% c(filter_ids)))
+
+newMeterIds <- c()
+cntr <- 1
+insertCntr <- 1
+while(cntr <= length(meterids)){
+  meterid <- sample(meterids,1)
+  # meterid <- "c3cd56b5-43fa-4753-a649-a8cf1f1bcf8b"
+  meterid <- "f3523f2e-c5ff-4545-893b-0f3c335161e1"
+  cntr <- cntr + 1
+  singleMeterData <- meterdata[meterdata$id == meterid,]
+  View(singleMeterData)
+  if(sum(is.na(singleMeterData$val)) < 7){
+    message(" id  ",meterid)
+    newMeterIds[insertCntr] <- as.character(meterid) 
+    insertCntr <- insertCntr + 1
+  }
+}
+length(newMeterIds)
 
 # meterid <- sample(meterids,1)
 # meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
@@ -22,7 +47,7 @@ meterids <- unique(meterdata$id)
 # meterid <- "089FB058-CD33-41DD-9AFF-F00795122C6E"
 # # meterid <- "0071CFB0−D92D−4035−ABA6−1AB961E4F573"
 # meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
-meterid <- "3C5A1042−D1B2−4301−891D−5F9C66927280"
+# meterid <- "3C5A1042−D1B2−4301−891D−5F9C66927280"
 todaysDate <-format(Sys.time(), "%a%b%d%Y%H%S")
 
 pdf(file=paste0("./outs/meters_",todaysDate,"_plot.pdf"))
@@ -34,9 +59,11 @@ cyclePeriod <- 7
 # meterids <- c("48DF03A1-4AE7-4729-A7F1-4853D74BEA44_FriMay1220171014","99381E39-CF2C-473E-BCE9-C49282B9D17F_FriMay1220171014")
 longPrediction <- 3 
 testcnt=length(meterids)
-# testcnt=100
+testcnt=300
 i=1
 error_summary <- c("id","mape")
+
+# b1de3a4a-2413-45bd-8fcf-749634b33368  -- too many missing values
 
 while(i <= testcnt){
   meterid <- sample(meterids,1)
@@ -44,6 +71,10 @@ while(i <= testcnt){
   message("Processing meter id - ",meterid)
   i <- i + 1
   singleMeterData <- meterdata[meterdata$id == meterid,]
+  if(sum(is.na(singleMeterData$val)) > 7){
+    message( " \t - ",meterid)
+    next
+  }
   if(nrow(singleMeterData) < 2 | length(singleMeterData) < 2 ){
     message(" Data is not valid !! Missing rows or columns")
     next
@@ -61,6 +92,7 @@ while(i <= testcnt){
     countr = 0;
     while(countr < 100){
       countr <- countr + 1
+      meterid
       singleMeterData <- singleMeterData[,c("id","ts","val","ts1")]
       tsMeterData <-as.numeric(singleMeterData$val)
       # str(tsMeterData)
