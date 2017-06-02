@@ -8,19 +8,41 @@ imputeFromNumOfDaysBefore <- function(timeseries,days){
         if(i == 1){
           timeseries[i] <- mean(timeseries,na.rm = TRUE)
         }else{
-          # timeseries[i] <-  mean(timeseries[1:i-1])
           message(" i ", i, " i+dyas ", (i+days), " - ",timeseries[i+days])
-          timeseries[i] <-  timeseries[i+days]
-          
+          if(!is.na(timeseries[i+days])){
+            timeseries[i+days]
+          }
+          if(!is.na(timeseries[i+(days*2)])){
+          timeseries[i] <-  timeseries[i+(days*2)]
+          }
+          if(!is.na(timeseries[i+(days*3)])){
+            timeseries[i] <-  timeseries[i+(days*3)]
+          }
         }        
       }else{
-        timeseries[i] <- timeseries[i-days]
+        if(!is.na(timeseries[i-days])){
+          timeseries[i-days]
+          message("1")
+        }
+        if(!is.na(timeseries[i+(days*2)])){
+          timeseries[i] <-  timeseries[i+(days*2)]
+          message("2")
+        }
+        if(!is.na(timeseries[i+(days*3)])){
+          timeseries[i] <-  timeseries[i+(days*3)]
+          message("3")
+        }
+        if(!is.na(timeseries[i+(days*4)])){
+          timeseries[i] <-  timeseries[i+(days*4)]
+          message("3")
+        }
       }
     }
     i <- i+1
   }
   return(timeseries)
 }
+# df <- singleMeterData
 # sevanDays <- imputeFromNumOfDaysBefore(df$val,7)
 # twoWeeks <- imputeFromNumOfDaysBefore(df$val,14)
 # 
@@ -28,3 +50,7 @@ imputeFromNumOfDaysBefore <- function(timeseries,days){
 # lines(df$val,type = 'l',col="blue")
 # lines(sevanDays,type = 'l', col = "red")
 # lines(twoWeeks,type = 'l', col = "green")
+
+
+
+
