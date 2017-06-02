@@ -13,9 +13,13 @@ source("datesUtil.R")
 source("timeseriesImpute.R")
 
 
+<<<<<<< HEAD
 # meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt") -- old V1
 meterdata <- trained_data_set("./inputs/daily_dmd_data_20170517.txt")
 
+=======
+meterdata <- trained_data_set("./inputs/daily_dmd_data_20170517.txt")
+>>>>>>> 422cc232abb794943178f57f963b03f13df7fd48
 meterids <- unique(meterdata$id)
 length(meterids)
 filter_ids <- c("bdfa1158-4ab7-4f0d-9435-cb9be9fdebf9","b1de3a4a-2413-45bd-8fcf-749634b33368",
