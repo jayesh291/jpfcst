@@ -13,7 +13,7 @@ source("datesUtil.R")
 source("timeseriesImpute.R")
 
 
-meterdata <- trained_data_set("./inputs/temp_dmd_data_daily_20170307.txt")
+meterdata <- trained_data_set("./inputs/daily_dmd_data_20170517.txt")
 meterids <- unique(meterdata$id)
 
 # meterid <- sample(meterids,1)
