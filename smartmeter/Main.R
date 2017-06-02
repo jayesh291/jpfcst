@@ -11,7 +11,7 @@ source("dailyPattern.R")
 source("ratioPrevMA.R")
 library(gdata)
 
-meterdata <- trained_data_set("./inputs/daily_dmd_data_20170327.txt")
+meterdata <- trained_data_set("./inputs/daily_dmd_data_20170517.txt")
 meterids <- unique(meterdata$id)
 meterid <- sample(meterids,1)
 meterid <- "150EBA46-26EB-4E0C-A6B9-5BE5043CCD61"
