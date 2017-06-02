@@ -1,105 +1,141 @@
 rm(list = ls())
-
-
 getwd()
 setwd("smartmeter/")
 source("libs.R")
 source("dataset.R")
 source("basevalue.R")
-source("movingAverage.R")
 source("dailyPattern.R")
 source("ratioPrevMA.R")
-library(gdata)
+source("movingAverage.R")
+source("normalization.R")
+source("scaleFactor.R")
+source("datesUtil.R")
+source("timeseriesImpute.R")
+
 
 meterdata <- trained_data_set("./inputs/daily_dmd_data_20170517.txt")
 meterids <- unique(meterdata$id)
-meterid <- sample(meterids,1)
-meterid <- "150EBA46-26EB-4E0C-A6B9-5BE5043CCD61"
+
+# meterid <- sample(meterids,1)
+# meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
+# meterid <- "0862C02E-73CA-4964-9661-6D783EF2DE7B"
+# meterid <- "089FB058-CD33-41DD-9AFF-F00795122C6E"
+# # meterid <- "0071CFB0−D92D−4035−ABA6−1AB961E4F573"
+# meterid <- "FE7F4454-20F3-45E7-B3BF-959A6F0B6F57"
+meterid <- "3C5A1042−D1B2−4301−891D−5F9C66927280"
 todaysDate <-format(Sys.time(), "%a%b%d%Y%H%S")
-pdf(file=paste0("./outs/fctplot",todaysDate,".pdf"))
-errorSummary <- c()
-noOfDaystoPredict <- 7
-for(meterid in meterids){
-  testcnt=1
-  i=1
-  if(i > testcnt){
-    break
-  }
-  testcnt <- testcnt + 1
+
+pdf(file=paste0("./outs/meters_",todaysDate,"_plot.pdf"))
+# Time series cycle - for weekly pattern of daily data it is 7
+cyclePeriod <- 7
+# short it will be 1 period to cycle period
+# medium will double the cycle period
+# long will triple the cycle period
+# meterids <- c("48DF03A1-4AE7-4729-A7F1-4853D74BEA44_FriMay1220171014","99381E39-CF2C-473E-BCE9-C49282B9D17F_FriMay1220171014")
+longPrediction <- 3 
+testcnt=length(meterids)
+# testcnt=100
+i=1
+error_summary <- c("id","mape")
+
+while(i <= testcnt){
+  meterid <- sample(meterids,1)
+  # meterid <- "3C5A1042-D1B2-4301-891D-5F9C66927280"
+  message("Processing meter id - ",meterid)
+  i <- i + 1
   singleMeterData <- meterdata[meterdata$id == meterid,]
-  singleMeterData[is.na(singleMeterData)] <- 0
-  
-  countr = 1;
-  while(countr < 3){
-    countr <- countr + 1
-    tsMeterData <- singleMeterData$val
-    ma <- movingAverage(tsMeterData,noOfDaystoPredict)
-    if(countr ==1){
-      nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
-      singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay)) 
-      
-    }else{
-      nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
-      singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay,)) 
-    }
-    singleMeterData$ma <- ma
-    # Need to handle spike and vally's
-    baseValue <- basevalue(tsMeterData,noOfDaystoPredict)
-    singleMeterData$baseValue <- baseValue
-    dailyPatterns <- dailyPattern(tsMeterData,ma,noOfDaystoPredict)
-    length(dailyPatterns)
-    singleMeterData$dailyPattern <- dailyPatterns
-    trend <- ratioPrevMA(ma,dailyPatterns, noOfDaystoPredict)
-    singleMeterData$trend <- trend
-    prediction <- baseValue*dailyPatterns*trend
-    singleMeterData$pred <- prediction
-    singleMeterData[nrow(singleMeterData),"val"]<- prediction[length(prediction)]
-    # appendSingleMeterData <- 
-    str(singleMeterData)
-    # write.csv(singleMeterData,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
-    
+  if(nrow(singleMeterData) < 2 | length(singleMeterData) < 2 ){
+    message(" Data is not valid !! Missing rows or columns")
+    next
   }
-  str(singleMeterData)
-  write.csv(singleMeterData,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
+    originalData <- singleMeterData
+    singleMeterData <- addMissingDates(data = singleMeterData, "ts1")
+    singleMeterData$val <- as.numeric(singleMeterData$val)
+    # missing value will be replaced by 7 days before or after when missing element is at start
+    # singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
+    singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
+    indx <- apply(singleMeterData, 2, function(x) any(is.na(x) | is.infinite(x)))
+    if(TRUE %in% indx){
+      message(" Please check missing data !!! ")
+    }
+    countr = 0;
+    while(countr < 100){
+      countr <- countr + 1
+      singleMeterData <- singleMeterData[,c("id","ts","val","ts1")]
+      tsMeterData <-as.numeric(singleMeterData$val)
+      # str(tsMeterData)
+      if(countr ==1){
+        nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
+        singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay))
+      }else{
+        nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData)-1,c("ts1")])+2,"%Y-%m-%d")
+        singleMeterData <- rbind(singleMeterData,c(meterid,nextDay,0,nextDay))
+      }
+      # nrow(singleMeterData)
+      tsMeterData[length(tsMeterData)+1] <- 0
+      if(length(tsMeterData) != length(singleMeterData$val)){
+        message(" Please check - Need to add row in tsMeterData !")
+      }
+      # For long prediction change it from 1 to number of periods i.e. for daily data
+      # weekly pattern, so only 3 weeks previous data could work. We can range it from 2,3 and 4 for month.
+      prediction <- {}
+      prediction$basevalue <- basevalueForLongPrediction(tsMeterData,cyclePeriod,longPrediction)
+      prediction$movingAverage <- movingAverage(tsMeterData,cyclePeriod)
+      # prediction$movingAverage
+      prediction$dailyPattern <- dailyPattern(tsMeterData,prediction$movingAverage,cyclePeriod)
+      # prediction$dailyPattern
+      prediction$maxVector <- maxVector(tsMeterData,originalData$val,cyclePeriod)
+      # prediction$maxVector
+      prediction$normalization <- (prediction$dailyPattern*0.2/prediction$maxVector)+0.9
+      # prediction$normalization
+      prediction$basePrediction <- prediction$basevalue * prediction$normalization
+      # prediction$basePrediction 
+      # nPrediction <- apply(prediction$basePrediction,prediction$maxVector, function(x,y))
+      nPrediction <- mapply(maxNormalization,prediction$basePrediction,prediction$maxVector)
+      prediction$basePrediction <- nPrediction
+      
+      prediction$minVector <- minVector(prediction$basePrediction,cyclePeriod)
+      # prediction$minVector
+      prediction$minValueWeeklyTrend <- minValueWeeklyTrend(prediction$minVector)
+      # prediction$minValueWeeklyTrend
+      prediction$avgMinValues <- minValueAvg(prediction$minValueWeeklyTrend)
+      # prediction$avgMinValues
+      prediction$prediction <- prediction$basePrediction*prediction$avgMinValues
+      # prediction$prediction
+      prediction <- as.data.frame(prediction)
+      nextDay <- format(as.Date(singleMeterData[nrow(singleMeterData),c("ts1")])+2,"%Y-%m-%d")
+      singleMeterData <- rbind(singleMeterData,c(meterid,as.character(nextDay),0,nextDay))
+      forecastData <- cbind(singleMeterData,prediction)
+      # str(forecastData)
+      forecastData$val[length(forecastData$val)] <- forecastData$basePrediction[length(forecastData$val)-1]
+      forecastData$id[length(forecastData$val)] <- meterid
+      forecastData$ts <- forecastData$ts1
+      fc <- as.data.frame(forecastData)
+      fc <- fc[-(nrow(fc)-1),]
+      singleMeterData <- fc
+    }
+    message(" y limits ",c(min(singleMeterData$prediction,na.rm = TRUE),max(singleMeterData$prediction, na.rm = TRUE)))
+    ylimMin <- 0
+    if( !is.infinite(min(singleMeterData$prediction,na.rm = TRUE))){
+      ylimMin <- min(singleMeterData$prediction,na.rm = TRUE)
+    }
+    ylimMax <- 1
+    if(!is.infinite(max(singleMeterData$prediction, na.rm = TRUE))){
+      ylimMax <- max(singleMeterData$prediction, na.rm = TRUE)
+    }
+    
+    write.csv(fc,file = paste0("./outs/",meterid,"_",todaysDate,".csv"))
+    try(plot(0,0,xlim = c(1,length(tsMeterData)),ylim = c(ylimMin,ylimMax),type = "n",xlab = meterid))
+    historicalData <- meterdata[meterdata$id == meterid,]
+    lines(historicalData$val,type = 'l',col="blue")
+    lines(singleMeterData$prediction,type = 'l', col = "red")
+    lines(singleMeterData$basePrediction,type = 'l', col = "green")
   
-  forecastData <- cbind(tsMeterData,prediction)
-  fc <- as.data.frame(forecastData)
-  #  Plot the graph with actual and predicted
-  plot(0,0,xlim = c(1,length(fc$tsMeterData)),ylim = c(min(singleMeterData$val),max(singleMeterData$val)),type = "n",xlab = meterid)
-  lines(fc$tsMeterData,type = 'l')
-  lines(singleMeterData$val[1:(length(tsMeterData)-noOfDaystoPredict)],type = 'l',col="blue")
-  lines(fc$prediction,type = 'l', col = "red")
-  # Forecast error calulation 
-  # MAPE
-  # write.csv(singleMeterData,file=paste0("./outs/",meterid,"_steps.csv"))
-  forecastError <- fc$tsMeterData[1:(length(fc$prediction)-8)]-fc$prediction[1:(length(fc$prediction)-8)]
-  mapeForecastError <- abs(forecastError/fc$tsMeterData[1:(length(trend)-8)]) * 100
-  mapeForecastError[is.na(mapeForecastError)] <- 0.00001
-  mapeForecastError[is.infinite(mapeForecastError)] <- 0.00001
-  # sMAPE
-  denominator <- abs(fc$prediction[1:(length(fc$prediction)-8)]+fc$tsMeterData[1:(length(fc$prediction)-8)])/2
-  nmratr <- abs(fc$prediction[1:(length(fc$prediction)-8)]-fc$tsMeterData[1:(length(fc$prediction)-8)])
-  smape = (1/7)* nmratr /denominator;
-  datas <- cbindX(data.frame(fc$tsMeterData), data.frame(fc$prediction), data.frame(mapeForecastError),data.frame(smape))
-  df.fc <- as.data.frame(datas)
-  # Forecast error : Average of MAPE
-  mapeMean=mean(mapeForecastError[length(mapeForecastError)-15:(length(mapeForecastError)-8)])
-  errorSummary <- c(errorSummary,mapeMean)
-  fileName <- paste0("./outs/",meterid,"mape_",mapeMean,"_",todaysDate,".csv")
-  # write.csv(df.fc,file=fileName)
+    abs_error <- abs(as.numeric(singleMeterData$val) - as.numeric(singleMeterData$prediction))/(as.numeric(singleMeterData$val))
+    mape <- sum(abs_error,na.rm = TRUE)*100/nrow(singleMeterData)
+    mape
+    error_summary <- rbind(error_summary,c(as.character(meterid),as.numeric(mape)))
 }
-# Create errorSummary for the forecast and save in csv
-mtr.data <- c()
-mtr.data$ids <- unique(meterdata$id)
-mtr.data$errorSummary <- errorSummary
-mtr.data.df <- as.data.frame(mtr.data)
-mtr.data.srt <- mtr.data.df[order(errorSummary),]
-write.csv(mtr.data.srt, file=paste0("./outs/errorSummary",todaysDate,".csv"))
-# quantile(errorSummary)
-# off the graphics 
+
+write.csv(file = paste0("./outs/error_summary",todaysDate,".csv"),error_summary)
 dev.off()
-
-
-
-
-

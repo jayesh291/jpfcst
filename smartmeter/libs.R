@@ -9,6 +9,7 @@ library(zoo)
 library(proxy)
 library(forecast)
 library(timeDate)
+library(gdata)
 # proxy supports many dist calculation
 # <start> 
 # "Jaccard" "Kulczynski1" "Kulczynski2" "Mountford" "Fager" "Russel" "simple matching" "Hamman" "Faith"
@@ -57,7 +58,7 @@ ipak <- function(pkg){
 # usage
 packages <- c("ggplot2", "plyr", "reshape2", "RColorBrewer", "scales", "grid")
 packages <- c(packages,"data.table","psych","plotrix","corrplot","dtw","zoo","proxy")
-packages <- c(packages,"forecast")
+packages <- c(packages,"forecast","gdata")
 
 ipak(packages)
 
