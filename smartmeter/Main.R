@@ -35,13 +35,11 @@ numOfDaysToForecast = 20
 error_summary <- c("id","mape")
 
 # Looping for all meters 
-i=1
-while(i <= numOfMetersToProcess){
+for(i in 1:numOfMetersToProcess){
   
   # Random pick one id from list
   meterid <- sample(meterids,1)
   message("Processing meter id - ",meterid)
-  i <- i + 1
   
   singleMeterData <- meterdata[meterdata$id == meterid,]
   if(nrow(singleMeterData) < 2 | length(singleMeterData) < 2 ){
@@ -50,12 +48,21 @@ while(i <= numOfMetersToProcess){
   }
   
   originalData <- singleMeterData
-  
+
+  # Outlier detection and replacements: Detect the outliers and remove those rows. Consider 
+  # it as missing information.
+  outlierTSO <- tso(ts(singleMeterData$val),delta = 0.7,types = c("LS"))
+  # nrow(outlierTSO$outliers)
+  message("For ",meterid,", # of rows ",nrow(outlierTSO$outliers))
+  if(nrow(outlierTSO$outliers) > 0){
+    # replaced <- singleMeterData[c(outlierTSO$outliers$ind),]
+    # write.csv(replaced,file = paste0("./outs/replaces",meterid,"_",todaysDate,".csv"))
+    singleMeterData <- singleMeterData[-c(outlierTSO$outliers$ind),]
+  }
+
   # Adding only dates for missing days 
   singleMeterData <- addMissingDates(data = singleMeterData, "ts1")
   singleMeterData$val <- as.numeric(singleMeterData$val)
-  
-  beforeMissingImpute <- singleMeterData$val
   
   # missing value will be replaced by 7 days before or after when missing element is at start
   singleMeterData$val <- imputeFromNumOfDaysBefore(singleMeterData$val,7) 
@@ -63,18 +70,6 @@ while(i <= numOfMetersToProcess){
   if(TRUE %in% indx){
     message(" Please check missing data !!! ")
   }
-  
-  afterMissingImpute <- singleMeterData$val
-  
-  # Outlier detection and removal
-  # outlierTS <- tsoutliers(singleMeterData$val,iterate = 4,lambda = NULL)
-  # singleMeterData$val[c(outlierTS$index)] <- outlierTS$replacements
-  # afterOutlierRemoval <- singleMeterData$val  
-  # df.test <- as.data.frame(singleMeterData)
-  # dataframe.validation <- cbind(df.test,beforeMissingImpute,afterMissingImpute,afterOutlierRemoval)
-  # Data to compare manually output of missing data and outlier steps before forecast 
-  # write.csv(dataframe.validation,file = paste0("./outs/validation_",meterid,"_",todaysDate,".csv"))
-  
   
   countr = 0;
   while(countr < numOfDaysToForecast){
@@ -152,3 +147,4 @@ while(i <= numOfMetersToProcess){
 
 write.csv(file = paste0("./outs/error_summary",todaysDate,".csv"),error_summary)
 dev.off()
+graphics.off()
