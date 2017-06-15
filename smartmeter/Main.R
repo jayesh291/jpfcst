@@ -55,8 +55,6 @@ for(i in 1:numOfMetersToProcess){
   # nrow(outlierTSO$outliers)
   message("For ",meterid,", # of rows ",nrow(outlierTSO$outliers))
   if(nrow(outlierTSO$outliers) > 0){
-    # replaced <- singleMeterData[c(outlierTSO$outliers$ind),]
-    # write.csv(replaced,file = paste0("./outs/replaces",meterid,"_",todaysDate,".csv"))
     singleMeterData <- singleMeterData[-c(outlierTSO$outliers$ind),]
   }
 
