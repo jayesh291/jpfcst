@@ -6,6 +6,8 @@
 .Rproj.user
 .*
 
+
+.RData
 .RData
 .Rhistory
 .gitignore
