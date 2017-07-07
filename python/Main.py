@@ -5,6 +5,7 @@ from Dataset import trainingDataSet
 from BaseValue import baseValueForTsForecast
 from MovingAverage import movingAverage
 from DailyPattern import dailyPattern
+from Normalization import maxVector
 
 # Read data set from a file
 meterdata = trainingDataSet('dmd_data_daily_170112.txt')
@@ -24,3 +25,4 @@ def forecast_factors(singleMeterData):
     base_values = baseValueForTsForecast(sortedSingleMeterData.val, cyclePeriod, 3)
     moving_average = movingAverage(sortedSingleMeterData.val, cyclePeriod)
     daily_pattern = dailyPattern(sortedSingleMeterData.val, moving_average, cyclePeriod)
+    max_vector = maxVector(sortedSingleMeterData.val, sortedSingleMeterData.val, cyclePeriod)
