@@ -1,4 +1,5 @@
 import numpy as np
+
 from Dataset import trainingDataSet
 
 
@@ -42,4 +43,3 @@ ma = movingAverage(sortedSingleMeterData.val, 7)
 with open('outfile1.csv', 'w') as fp:
     fp.write("\n".join(map(lambda x: str(x), ma)))
     fp.close()
-

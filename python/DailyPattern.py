@@ -1,6 +1,7 @@
-import pandas as pd
 from Dataset import trainingDataSet
 from MovingAverage import movingAverage
+
+
 def dailyPattern(tsMeterData, movingAverage, noOfDays):
     dpwma = []
     i = 1
@@ -13,12 +14,10 @@ def dailyPattern(tsMeterData, movingAverage, noOfDays):
     return dpwma
 
 
-
-
 # Run to test the above function
 meterdata = trainingDataSet('dmd_data_daily_170112.txt')
 singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
 sortedSingleMeterData = singleMeterData.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
 timeseries = singleMeterData.val
-movingAverage = movingAverage(timeseries,7)
+movingAverage = movingAverage(timeseries, 7)
 basevalues = dailyPattern(timeseries, movingAverage=movingAverage, noOfDays=7)

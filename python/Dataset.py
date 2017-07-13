@@ -1,6 +1,4 @@
 import pandas as pd
-import numpy as np
-from datetime import datetime
 
 
 def trainingDataSet(traindata_filename):
@@ -10,11 +8,6 @@ def trainingDataSet(traindata_filename):
     # sort file based on id and ts
     sorteddata = traindata_file.sort_values(['id', 'ts'], ascending=[1, 0])
     return sorteddata
-
-
-def testing_data_set(testdata_filename):
-    return ("")
-
 
 # meterdata = trained_data_set('dmd_data_daily_170112.txt')
 # print(meterdata)

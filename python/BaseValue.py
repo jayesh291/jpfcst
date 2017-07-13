@@ -7,13 +7,11 @@ def baseValueForTsForecast(tsMeterData, numOfDays, forecastPeriod):
     numOfDaysToPredict = numOfDays * forecastPeriod
     basevalue = []
     for i in range(1, len(tsMeterData) + 1):
-        print(tsMeterData[i], " values")
         if i > numOfDaysToPredict:
             basevalue.append(tsMeterData[i - numOfDaysToPredict])
         else:
             basevalue.append(tsMeterData[i])
     return basevalue
-
 
 
 # Run to test the above function
