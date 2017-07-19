@@ -1,18 +1,17 @@
 from Dataset import trainingDataSet
 from MovingAverage import movingAverage
 
-
 def dailyPattern(tsMeterData, movingAverage, noOfDays):
+    tsMeterData=tsMeterData.tolist()
     dpwma = []
     i = 1
-    for i in range(1, len(tsMeterData) + 1):
+    for i in range(0, len(tsMeterData) + 1):
         if i > noOfDays:
             dpwma.append(tsMeterData[i - noOfDays] / movingAverage[i - noOfDays])
         else:
             dpwma.append(movingAverage[i])
         i += 1
     return dpwma
-
 
 # Run to test the above function
 meterdata = trainingDataSet('dmd_data_daily_170112.txt')
@@ -21,3 +20,4 @@ sortedSingleMeterData = singleMeterData.sort_values(["ts", "id", "val"], ascendi
 timeseries = singleMeterData.val
 movingAverage = movingAverage(timeseries, 7)
 basevalues = dailyPattern(timeseries, movingAverage=movingAverage, noOfDays=7)
+# print basevalues

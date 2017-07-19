@@ -1,12 +1,11 @@
 from Dataset import trainingDataSet
-
-
 # Base value for forececast given timeseries data, num of days are cycle period,
 # forecast period is short,medium, long
 def baseValueForTsForecast(tsMeterData, numOfDays, forecastPeriod):
     numOfDaysToPredict = numOfDays * forecastPeriod
+    tsMeterData=tsMeterData.tolist()
     basevalue = []
-    for i in range(1, len(tsMeterData) + 1):
+    for i in range(0, len(tsMeterData) + 1):
         if i > numOfDaysToPredict:
             basevalue.append(tsMeterData[i - numOfDaysToPredict])
         else:
