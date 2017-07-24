@@ -20,18 +20,20 @@ def imputeTS(timeseries1, days):
                 timeseries[i] = timeseries[i - days]
         i+=1
 
-    timeseries=pd.DataFrame(timeseries)
-    timeseries1 = pd.DataFrame(timeseries1).reset_index(timeseries,drop=True)
-    timeseries1['val1'] = timeseries[0]
+    timeseries1=timeseries1.reset_index()
+    del timeseries1['index']
+    timeseries1['val1'] = pd.Series(timeseries)
     return timeseries1
 
-# run to test the function
-meterdata = trainingDataSet('dmd_data_daily_170112.txt')
-meterids = meterdata.id.unique()
-singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
-sortedSingleMeterData = singleMeterData.sort_values(["ts","id","val"],ascending=[1,0, 0])
-addedMissingDates=addMissingDates(sortedSingleMeterData,'ts')
-timeseries=addedMissingDates
-impute_TS=imputeTS(timeseries, 7)
-
+# # run to test the function
+# meterdata = trainingDataSet('dmd_data_daily_170112.txt')
+# meterids = meterdata.id.unique()
+# # singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
+# # singleMeterData = meterdata[meterdata['id'] == "04764786-1E05-4DF6-9EC0-415BEBF13E00"]
+# singleMeterData=meterdata[meterdata['id'] == "04764786-1E05-4DF6-9EC0-415BEBF13E00"]
+# sortedSingleMeterData = singleMeterData.sort_values(["ts","id","val"],ascending=[1,0, 0])
+# addedMissingDates=addMissingDates(sortedSingleMeterData,'ts')
+# timeseries=addedMissingDates
+# impute_TS=imputeTS(timeseries, 7)
+# print(impute_TS)
 
