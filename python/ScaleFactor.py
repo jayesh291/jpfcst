@@ -6,10 +6,6 @@ from MovingAverage import movingAverage
 from Normalization import maxVector
 from CustomLogger import  *
 
-logger = CustomLogger("ScaleFactor").logger
-#info 20, Warning 30,
-level=20
-
 def minVector(timeseries, cyclePeriod):
     minVector =[]
     try:
@@ -57,24 +53,34 @@ def minValueAvg(timeseries):
         logger.log(msg=" Created vector of min value %s" %len(minValueWeeklyAvgTrend),level=level)
         return minValueWeeklyAvgTrend
 
-# run to test the function
-meterdata = trainingDataSet('dmd_data_daily_170112.txt')
-meterids = meterdata.id.unique()
-singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
-# defining a the cycle period
-cyclePeriod = 7
-# for short prediction use 1 for medium range forecast use 2 for long prediction use 3
-preidctionType = [1, 2, 3]
-cycleperiod=7
-sortedSingleMeterData = singleMeterData.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
-base_values = baseValueForTsForecast(sortedSingleMeterData.val, cyclePeriod, 3)
-moving_average = movingAverage(sortedSingleMeterData.val, cyclePeriod)
-daily_pattern = dailyPattern(sortedSingleMeterData.val, moving_average, cyclePeriod)
-max_vector = maxVector(sortedSingleMeterData.val, sortedSingleMeterData.val, cyclePeriod)
-normalization = np.array(daily_pattern) * 0.2 / np.array(max_vector) + 0.9
-base_prediction = np.array(base_values) * np.array(normalization)
-min_vector = minVector(base_prediction,cycleperiod)
-min_value_weekly_trend = minValueWeeklyTrend(min_vector)
-min_value_avg = minValueAvg(min_value_weekly_trend)
-# logger.log(msg = min_value_avg,level=20)
-# print min_value_avg
+
+logger = CustomLogger("ScaleFactor").logger
+# info 20, Warning 30,
+level = 20
+
+def main():
+    # Any code you like
+    # run to test the function
+    meterdata = trainingDataSet('input/dmd_data_daily_170112.txt')
+    meterids = meterdata.id.unique()
+    singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
+    # defining a the cycle period
+    cyclePeriod = 7
+    # for short prediction use 1 for medium range forecast use 2 for long prediction use 3
+    preidctionType = [1, 2, 3]
+    cycleperiod=7
+    sortedSingleMeterData = singleMeterData.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
+    base_values = baseValueForTsForecast(sortedSingleMeterData.val, cyclePeriod, 3)
+    moving_average = movingAverage(sortedSingleMeterData.val, cyclePeriod)
+    daily_pattern = dailyPattern(sortedSingleMeterData.val, moving_average, cyclePeriod)
+    max_vector = maxVector(sortedSingleMeterData.val, sortedSingleMeterData.val, cyclePeriod)
+    normalization = np.array(daily_pattern) * 0.2 / np.array(max_vector) + 0.9
+    base_prediction = np.array(base_values) * np.array(normalization)
+    min_vector = minVector(base_prediction,cycleperiod)
+    min_value_weekly_trend = minValueWeeklyTrend(min_vector)
+    min_value_avg = minValueAvg(min_value_weekly_trend)
+    logger.log(msg = min_value_avg,level=20)
+    print (min_value_avg)
+
+if __name__ == '__main__':
+  main()

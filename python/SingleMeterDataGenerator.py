@@ -105,3 +105,4 @@ date_format="%Y-%m-%d"
 #Logging object are created
 logger=CustomLogger("SingleMeterDataGenerator").logger
 level=20
+

@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 def trainingDataSet(traindata_filename):
     # Reading file:
     cols = ['id', 'ts', 'val']

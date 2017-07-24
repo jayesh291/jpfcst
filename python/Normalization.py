@@ -22,8 +22,12 @@ def maxNormalization(x, y, cyclePeriod):
 
 
 # run to test the function
-meterdata = trainingDataSet('dmd_data_daily_170112.txt')
-singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
-sortedSingleMeterData = singleMeterData.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
-timeseries = sortedSingleMeterData.val
-max_vector=maxVector(timeseries, timeseries, 7)
+def main():
+    meterdata = trainingDataSet("input/dmd_data_daily_170112.txt")
+    singleMeterData = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
+    sortedSingleMeterData = singleMeterData.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
+    timeseries = sortedSingleMeterData.val
+    max_vector=maxVector(timeseries, timeseries, 7)
+
+if __name__=='__main__':
+    pass

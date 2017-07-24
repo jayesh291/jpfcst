@@ -17,5 +17,3 @@ class CustomLogger:
 
         self.logger.addHandler(handler)
         self.logger.addHandler(consoleHandler)
-
-

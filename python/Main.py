@@ -8,6 +8,7 @@ from SummaryOfMeters import pre_processing
 from SummaryOfMeters import too_many_zero_values
 from CustomLogger import CustomLogger
 
+filename='input/dmd_data_daily_170112.txt'
 logger = CustomLogger("Main").logger
 
 def forecast_factors_range(singleMeterData,no_of_days):
@@ -25,7 +26,6 @@ def computeAllMeterData(no_of_meters):
     # for i in range(0,no_of_meters):
     for meter in meterids[0:no_of_meters]:
         first_ten_meters.append(meter)
-
 
     pre_processing_data=pre_processing(meterdata)
     too_many_missing_dates=pre_processing_data[pre_processing_data['percentage_missing_date'] > 10.00]
@@ -52,7 +52,7 @@ def computeAllMeterData(no_of_meters):
 
 
 try:
-    meterdata = trainingDataSet('dmd_data_daily_170112.txt')
+    meterdata = trainingDataSet(filename)
 except FileNotFoundError as fileNotFoundError:
     logger.log("Data set file is missing. Please check the file path")
     logger.info(fileNotFoundError)
