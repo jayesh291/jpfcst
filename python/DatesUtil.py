@@ -3,6 +3,7 @@ import pandas as pd
 from datetime import datetime
 
 def missingDates(data, dateCol):
+    # sorted_single_meter_data = data.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
     # timeDf : copy of dataset['ts'] column
     timeDf =pd.to_datetime(data.iloc[0:][dateCol])
     availabledates=[]
@@ -15,10 +16,20 @@ def missingDates(data, dateCol):
     delta = end - start
     alldays = pd.date_range(start, periods=delta.days,freq='D')
     alldays = pd.to_datetime(alldays,"%Y-%m-%d")
+    count=0
     missingDates = []
     for day in alldays:
         if day not in availabledates:
             missingDates.append(day)
+
+    # for day in alldays:
+    #     if day not in availabledates:
+    #         if (float(count) / len(availabledates) * 100) > 10.00:
+    #             print( "meter id ", data.iloc[0]['id'], "has too many missing dates")
+    #             break
+    #         else:
+    #             missingDates.append(day)
+    #             count+=1
     return missingDates
 
 def addMissingDates(data, dateCol):
@@ -41,12 +52,14 @@ def addMissingDates(data, dateCol):
     mergedata.sort_values(by='ts',ascending=True,inplace=True)
     return mergedata
 
-# Run to test the above function
-meterdata = trainingDataSet('dmd_data_daily_170112.txt')
-meterids = meterdata.id.unique()
-single_meter_data = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
-sorted_single_meter_data = single_meter_data.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
-timeseries = single_meter_data.val
-missing_dates=missingDates(sorted_single_meter_data,'ts')
-add_missing_dates=addMissingDates(sorted_single_meter_data,'ts')
-add_missing_dates=addMissingDates(sorted_single_meter_data,'ts')
+# # Run to test the above function
+# meterdata = trainingDataSet('dmd_data_daily_170112.txt')
+# meterids = meterdata.id.unique()
+# single_meter_data = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
+# # single_meter_data = meterdata[meterdata['id'] == "18D7776E-13C1-4591-8906-18DEC7F04442"]
+# sorted_single_meter_data = single_meter_data.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
+# timeseries = single_meter_data.val
+# missing_dates=missingDates(sorted_single_meter_data,'ts')
+# print missing_dates
+# add_missing_dates=addMissingDates(sorted_single_meter_data,'ts')
+# print add_missing_dates
