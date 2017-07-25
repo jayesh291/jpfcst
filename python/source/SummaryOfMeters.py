@@ -7,7 +7,7 @@ from source.Dataset import trainingDataSet
 
 def summary_of_meters(meterids):
     summary_meter=[]
-    meterdata = trainingDataSet('input/dmd_data_daily_170112.txt')
+    meterdata = trainingDataSet('../input/dmd_data_daily_170112.txt')
     for meters in meterids:
         single_meter_data=meterdata[meterdata['id'] == meters]
         sorted_single_meter_data = single_meter_data.sort_values(["ts", "id", "val"], ascending=[1, 0, 0])
@@ -45,7 +45,7 @@ def pre_processing(meterdata):
     # print summary_meter_series
 
 def too_many_zero_values():
-    meterdata = trainingDataSet('input/dmd_data_daily_170112.txt')
+    meterdata = trainingDataSet('../input/dmd_data_daily_170112.txt')
     meterids = meterdata.id.unique()
     too_many_zero_values=[]
     for meter in meterids:
@@ -56,7 +56,7 @@ def too_many_zero_values():
 
 
 def main():
-    meterdata = trainingDataSet('input/dmd_data_daily_170112.txt')
+    meterdata = trainingDataSet('../input/dmd_data_daily_170112.txt')
     single_meter_data = meterdata[meterdata['id'] == '3C5A1042-D1B2-4301-891D-5F9C66927280']
     single_meter_data = meterdata[meterdata['id'] == "0071CFB0-D92D-4035-ABA6-1AB961E4F573"]
     single_meter_data = meterdata[meterdata['id'] == "18D7776E-13C1-4591-8906-18DEC7F04442"]

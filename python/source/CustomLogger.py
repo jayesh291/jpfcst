@@ -1,9 +1,15 @@
 import logging
+import platform
 from logging.handlers import RotatingFileHandler
-
+import os
 class CustomLogger:
     def __init__(self,logFile):
-        self.filename="log/log.log"
+
+        if "posix" in os.name:
+            self.filename = './log/log.log'
+        else:
+            self.filename="../log/log.log"
+
         self.logger=logging.getLogger(logFile)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         logging.basicConfig(filename=self.filename, filemode='a', level=logging.DEBUG,
