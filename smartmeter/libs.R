@@ -1,15 +1,4 @@
-library(data.table)
-library(psych)
-library(plotrix)
-library(reshape)
-library(corrplot)
-library(ggplot2)
-library(dtw)
-library(zoo)
-library(proxy)
-library(forecast)
-library(timeDate)
-library(gdata)
+
 # proxy supports many dist calculation
 # <start> 
 # "Jaccard" "Kulczynski1" "Kulczynski2" "Mountford" "Fager" "Russel" "simple matching" "Hamman" "Faith"
@@ -56,12 +45,23 @@ ipak <- function(pkg){
   sapply(pkg, require, character.only = TRUE)
 }
 # usage
-packages <- c("ggplot2", "plyr", "reshape2", "RColorBrewer", "scales", "grid")
+packages <- c("ggplot2", "plyr", "reshape2", "RColorBrewer", "scales", "grid","tsoutliers")
 packages <- c(packages,"data.table","psych","plotrix","corrplot","dtw","zoo","proxy")
 packages <- c(packages,"forecast","gdata")
 
 ipak(packages)
 
 
-
-
+library(data.table)
+library(psych)
+library(plotrix)
+library(reshape)
+library(corrplot)
+library(ggplot2)
+library(dtw)
+library(zoo)
+library(proxy)
+library(forecast)
+library(timeDate)
+library(gdata)
+library(tsoutliers)
