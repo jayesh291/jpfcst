@@ -5,10 +5,7 @@ import os
 class CustomLogger:
     def __init__(self,logFile):
 
-        if "posix" in os.name:
-            self.filename = './log/log.log'
-        else:
-            self.filename="../log/log.log"
+        self.filename="../log/log.log"
 
         self.logger=logging.getLogger(logFile)
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')

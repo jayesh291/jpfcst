@@ -5,6 +5,7 @@ logger = CustomLogger("Main").logger
 def trainingDataSet(traindata_filename):
     # Reading file:
     cols = ['id', 'ts', 'val']
+    sorteddata=[]
     try:
         traindata_file = pd.read_csv(traindata_filename, sep='\t', names=cols, encoding='latin-1')
         # sort file based on id and ts
