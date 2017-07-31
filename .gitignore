@@ -5,7 +5,7 @@
 /outs
 .Rproj.user
 .*
-
+python/__pycache__/
 
 .RData
 .RData
