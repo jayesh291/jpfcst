@@ -3,7 +3,7 @@ from source.CsvGenerator import generator_csv
 from source.DatesUtil import missingDates
 
 from source.Dataset import trainingDataSet
-
+import os
 
 def summary_of_meters(meterids):
     summary_meter=[]
@@ -45,7 +45,9 @@ def pre_processing(meterdata):
     # print summary_meter_series
 
 def too_many_zero_values():
-    meterdata = trainingDataSet('../input/dmd_data_daily_170112.txt')
+    filename = '../input/dmd_data_daily_170112.txt'
+
+    meterdata = trainingDataSet(filename)
     meterids = meterdata.id.unique()
     too_many_zero_values=[]
     for meter in meterids:
